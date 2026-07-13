@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>利益計算ツール</title>
+<style>
+  :root{--main:#0a5c8a;--main-dark:#073f5f;--bg:#f4f6f7;--card:#fff;--line:#e2e6e8;
+    --text:#1f2621;--muted:#6b7570;--warn:#c0392b;--warn-bg:#fdecea;--ok:#0a7d3c;--ok-bg:#e7f6ec}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    background:var(--bg);color:var(--text);font-size:16px;padding-bottom:40px}
+  header{background:var(--main);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10}
+  header h1{margin:0;font-size:18px;font-weight:700}
+  header .sub{font-size:12px;opacity:.85;margin-top:2px}
+  .wrap{max-width:600px;margin:0 auto;padding:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .card h2{margin:0 0 6px;font-size:15px;color:var(--main-dark)}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 3px}
+  input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;font-size:17px;text-align:right}
+  .result{margin-top:6px}
+  .big{font-size:15px;color:var(--muted)}
+  .price{font-size:36px;font-weight:800;color:var(--main-dark);line-height:1.1;margin:2px 0}
+  .line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .line:last-child{border-bottom:none}
+  .line b{font-weight:700}
+  .note{margin-top:10px;padding:10px;border-radius:9px;font-size:13px}
+  .note.warn{background:var(--warn-bg);color:var(--warn)}
+  .note.ok{background:var(--ok-bg);color:#075c2c}
+  .muted{color:var(--muted);font-size:12px;margin-top:8px}
+  .section-title{font-size:13px;font-weight:700;color:var(--main-dark);margin:14px 0 4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>📦 利益計算ツール</h1>
+  <div class="sub">原価・値入・数量から、損益分岐と目標粗利までの差を確認（鮮魚・精肉・青果・惣菜 共通）</div>
+</header>
+<div class="wrap">
+  <div class="card">
+    <label>単位（例：匹・個・パック・kg）</label>
+    <input id="unit" type="text" placeholder="個" value="個" oninput="calc()">
+
+    <label>原価（1単位あたり・円）</label>
+    <input id="cost" type="number" inputmode="decimal" placeholder="例：500" oninput="calc()">
+
+    <label>値入率（%）※売価に対する粗利の割合</label>
+    <input id="markup" type="number" inputmode="decimal" placeholder="例：40" oninput="calc()">
+
+    <label>仕入数量</label>
+    <input id="qty" type="number" inputmode="numeric" placeholder="例：20" oninput="calc()">
+
+    <label>欲しい粗利額（目標・円）</label>
+    <input id="target" type="number" inputmode="numeric" placeholder="例：8000" oninput="calc()">
+  </div>
+
+  <div class="card result" id="resultCard" style="display:none">
+    <h2>売価と1単位あたり粗利</h2>
+    <div class="big">売価（1単位あたり）</div>
+    <div class="price" id="outPrice">—</div>
+    <div class="line"><span>1単位あたり粗利額</span><b id="outUnitMargin">—</b></div>
+    <div class="line"><span>総原価（仕入数量分）</span><b id="outTotalCost">—</b></div>
+
+    <div class="section-title">① 損益分岐（元が取れるライン）</div>
+    <div class="line"><span>損益分岐に必要な販売数</span><b id="outBEQty">—</b></div>
+    <div class="line"><span>損益分岐に必要な販売率</span><b id="outBERate">—</b></div>
+
+    <div class="section-title">② 欲しい粗利額に届くライン</div>
+    <div class="line"><span>目標達成に必要な販売数</span><b id="outTargetQty">—</b></div>
+    <div class="line"><span>目標達成に必要な販売率</span><b id="outTargetRate">—</b></div>
+
+    <div class="section-title">③ 完売した場合との比較</div>
+    <div class="line"><span>完売時の総粗利見込み</span><b id="outFullMargin">—</b></div>
+    <div class="line"><span>目標粗利額との差</span><b id="outDiff">—</b></div>
+
+    <div class="note" id="note"></div>
+    <div class="muted">値入率は売価に対する粗利の割合（原価100円・値入率40%なら売価167円）で計算しています。目安の数値です。ロス・値引き販売は考慮していません。</div>
+  </div>
+</div>
+
+<script>
+function yen(n){return Math.round(n).toLocaleString()+'円'}
+function pct(n){return (Math.round(n*10)/10)+'%'}
+
+function calc(){
+  const unit=document.getElementById('unit').value.trim()||'個';
+  const cost=Number(document.getElementById('cost').value);
+  const markup=Number(document.getElementById('markup').value);
+  const qty=Number(document.getElementById('qty').value);
+  const targetInput=document.getElementById('target').value;
+  const target=targetInput===''?0:Number(targetInput);
+
+  const resultCard=document.getElementById('resultCard');
+  if(!cost||cost<=0||!markup||markup<=0||markup>=100||!qty||qty<=0){
+    resultCard.style.display='none';
+    return;
+  }
+  resultCard.style.display='block';
+
+  const price=cost/(1-markup/100);
+  const unitMargin=price-cost;
+  const totalCost=cost*qty;
+
+  const beQtyRaw=totalCost/price;
+  const beQty=Math.ceil(beQtyRaw);
+  const beRate=beQtyRaw/qty*100;
+
+  const targetQtyRaw=(totalCost+target)/price;
+  const targetQty=Math.ceil(targetQtyRaw);
+  const targetRate=targetQtyRaw/qty*100;
+
+  const fullMargin=unitMargin*qty;
+  const diff=fullMargin-target;
+
+  document.getElementById('outPrice').textContent=yen(price);
+  document.getElementById('outUnitMargin').textContent=yen(unitMargin);
+  document.getElementById('outTotalCost').textContent=yen(totalCost);
+
+  document.getElementById('outBEQty').textContent=beQty+unit;
+  document.getElementById('outBERate').textContent=pct(beRate);
+
+  document.getElementById('outTargetQty').textContent=targetQty+unit;
+  document.getElementById('outTargetRate').textContent=pct(targetRate);
+
+  document.getElementById('outFullMargin').textContent=yen(fullMargin);
+  document.getElementById('outDiff').textContent=(diff>=0?'+':'')+yen(diff)+(diff>=0?'（達成見込み）':'（不足見込み）');
+
+  const note=document.getElementById('note');
+  let msgs=[];
+  if(targetQty>qty){
+    msgs.push('⚠ 目標粗利額の達成には仕入数量（'+qty+unit+'）を超える販売が必要です。今回の仕入数量では完売しても目標に届きません。');
+  }else{
+    const margin=targetQty-beQty;
+    msgs.push('目標粗利額の達成は損益分岐から あと'+margin+unit+' 多く売れば到達します。');
+  }
+  if(diff<0){
+    note.className='note warn';
+  }else{
+    note.className='note ok';
+  }
+  note.innerHTML=msgs.join('<br>');
+}
+</script>
+</body>
+</html>
