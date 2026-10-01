@@ -145,6 +145,7 @@ footer a{color:var(--main-dark)}
   <div class="inner">
     <h1>Weekends 報奨金シミュレーター</h1>
     <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。店舗予算は<b>税抜6,000万円</b>（スマレジ登録値）、人件費は2026年8/16〜9/15の給与実績から作った新体制の見込みです。</p>
+    <p><b>10/1の最終案：売上6,300万円・粗利2,150万円（粗利率34.1%）、報奨金は粗利が月の目標の100%以上で店舗計3万円（店長1.2万・古参パート0.8万・パート各0.5万）、105%以上で5万円。</b>入力欄の初期値はこの案です。下の解説文の一部は旧案（売上6,000万円・粗利率35%）の時点のものです。月別目標の確定値はExcel「目標設定」シートを見てください。</p>
   </div>
 </header>
 <nav class="toc" aria-label="ページ内の移動">
@@ -241,7 +242,7 @@ footer a{color:var(--main-dark)}
         </div>
         <div class="field">
           <label for="gpRate">粗利率（%）</label>
-          <input id="gpRate" type="number" inputmode="decimal" step="0.5" value="35">
+          <input id="gpRate" type="number" inputmode="decimal" step="0.1" value="34.1">
           <span class="hint">前年 31.0%／前々年 34.3%</span>
         </div>
         <div class="field">
@@ -284,7 +285,7 @@ footer a{color:var(--main-dark)}
       </div>
       <h3>売上目標から逆算する</h3>
       <div class="fields">
-        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="60000000"><span class="hint" id="revSalesHint"></span></div>
+        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="63000000"><span class="hint" id="revSalesHint"></span></div>
         <div class="field"><label>この売上で必要な粗利率</label><div class="num" style="font-size:22px;font-weight:600;color:var(--main-dark)" id="revOut">—</div><span class="hint" id="revOutSub"></span></div>
       </div>
     </div>
@@ -313,11 +314,11 @@ footer a{color:var(--main-dark)}
     <div class="panel">
       <h3 style="margin-top:0">目標と判定ルール</h3>
       <div class="fields">
-        <div class="field"><label for="tgtSales">店舗予算（税抜・円/年）</label><input id="tgtSales" type="number" step="1000000" value="60000000"><span class="hint" id="tgtSalesHint"></span></div>
-        <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.5" value="35"><span class="hint" id="tgtGpHint"></span></div>
+        <div class="field"><label for="tgtSales">店舗予算（税抜・円/年）</label><input id="tgtSales" type="number" step="1000000" value="63000000"><span class="hint" id="tgtSalesHint"></span></div>
+        <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.1" value="34.1"><span class="hint" id="tgtGpHint"></span></div>
         <div class="field"><label for="alloc">月への配分</label>
           <select id="alloc"><option value="store">スマレジの店舗予算の月比率</option><option value="prev">前年実績の月比率</option></select></div>
-        <div class="field"><label for="wGp">粗利額の重み（%）</label><input id="wGp" type="number" step="5" value="80"><span class="hint" id="wHint">売上高の重み 20%</span></div>
+        <div class="field"><label for="wGp">粗利額の重み（%）</label><input id="wGp" type="number" step="5" value="100"><span class="hint" id="wHint">売上高の重み 0%</span></div>
         <div class="field"><label for="gate">支給の前提：粗利の予算比（%以上）</label><input id="gate" type="number" step="1" value="100"><span class="hint">未満なら売上が良くても0円</span></div>
         <div class="field"><label>段階（スコア＝予算比％以上）</label>
           <div style="display:flex;gap:6px"><input id="th1" type="number" value="100" aria-label="第1段階" style="width:33%"><input id="th2" type="number" value="105" aria-label="第2段階" style="width:33%"><input id="th3" type="number" value="110" aria-label="第3段階" style="width:33%"></div></div>
@@ -327,9 +328,9 @@ footer a{color:var(--main-dark)}
         <table class="tbl" id="staffTbl">
           <thead><tr><th>区分</th><th class="n">人数</th><th class="n">第1段階</th><th class="n">第2段階</th><th class="n">第3段階</th></tr></thead>
           <tbody>
-            <tr><td>店長</td><td class="n"><input id="s0c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s0a" type="number" step="1000" value="8000"></td><td class="n"><input id="s0b" type="number" step="1000" value="13000"></td><td class="n"><input id="s0d" type="number" step="1000" value="18000"></td></tr>
-            <tr><td>古参パート</td><td class="n"><input id="s1c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s1a" type="number" step="1000" value="7000"></td><td class="n"><input id="s1b" type="number" step="1000" value="10000"></td><td class="n"><input id="s1d" type="number" step="1000" value="13000"></td></tr>
-            <tr><td>その他パート</td><td class="n"><input id="s2c" type="number" value="2" style="width:56px"></td><td class="n"><input id="s2a" type="number" step="1000" value="3000"></td><td class="n"><input id="s2b" type="number" step="1000" value="5000"></td><td class="n"><input id="s2d" type="number" step="1000" value="7000"></td></tr>
+            <tr><td>店長</td><td class="n"><input id="s0c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s0a" type="number" step="1000" value="12000"></td><td class="n"><input id="s0b" type="number" step="1000" value="20000"></td><td class="n"><input id="s0d" type="number" step="1000" value="20000"></td></tr>
+            <tr><td>古参パート</td><td class="n"><input id="s1c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s1a" type="number" step="1000" value="8000"></td><td class="n"><input id="s1b" type="number" step="1000" value="14000"></td><td class="n"><input id="s1d" type="number" step="1000" value="14000"></td></tr>
+            <tr><td>その他パート</td><td class="n"><input id="s2c" type="number" value="2" style="width:56px"></td><td class="n"><input id="s2a" type="number" step="1000" value="5000"></td><td class="n"><input id="s2b" type="number" step="1000" value="8000"></td><td class="n"><input id="s2d" type="number" step="1000" value="8000"></td></tr>
             <tr class="total"><td>店舗合計（月）</td><td class="n" id="sumC"></td><td class="n" id="sumA"></td><td class="n" id="sumB"></td><td class="n" id="sumD"></td></tr>
           </tbody>
         </table>
@@ -490,7 +491,7 @@ const fmtPct=(v,d)=>(v*100).toFixed(d===undefined?1:d)+'%';
 const cls=v=>v<0?'neg':(v>0?'pos':'');
 
 // ---- storage (per-viewer convenience) ----
-const KEY='weekends-bonus-sim-v1';
+const KEY='weekends-bonus-sim-v2'; // v2: 売上6,300万・粗利2,150万・報奨金3万円案
 function save(){
   try{
     const o={};
@@ -633,9 +634,9 @@ function renderBudget(g){
   const rows=[
     {n:'前年並み（2026年度実績の売上・粗利率）',S:S0,g:GP0/S0},
     {n:'損益分岐（新体制の実費）',S:Ff/(g-s.v),g:g},
-    {n:'店舗予算（スマレジ・税抜6,000万円）',S:B,g:g},
+    {n:'店舗予算（税抜'+fmtMan(B)+'）',S:B,g:g},
     {n:'損益分岐（新体制の実費＋本部費）',S:Sm,g:g},
-    {n:'予算の110%（報奨金の第3段階）',S:B*1.1,g:g}
+    {n:'予算の110%',S:B*1.1,g:g}
   ];
   const days=Math.max(1,val('days'));
   $('budgetTbl').querySelector('tbody').innerHTML=rows.map((r,i)=>{
