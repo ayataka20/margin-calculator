@@ -198,6 +198,27 @@ footer a{color:var(--main-dark)}
       <tbody></tbody>
     </table>
   </div>
+  <details class="adv" open>
+    <summary>固定費と変動費の分解（前年実績 → 今年の見込み）</summary>
+    <div class="tbl-wrap" style="margin-top:8px">
+      <table class="tbl">
+        <thead><tr><th>勘定科目</th><th class="n">前年実績（年）</th><th>区分</th><th>判断の根拠</th><th class="n">今年の見込み（年）</th></tr></thead>
+        <tbody>
+          <tr><td>売上原価</td><td class="n">3,704.8万円</td><td><span class="pill mid">変動</span></td><td>売上×（1−粗利率）</td><td class="n">売上の65%</td></tr>
+          <tr><td>テナント経費（連動分）</td><td class="n">371.3万円</td><td><span class="pill mid">変動</span></td><td>12か月の回帰で売上の6.92%（決定係数0.94）</td><td class="n">売上の6.92%</td></tr>
+          <tr><td>テナント経費（固定分）</td><td class="n">251.8万円</td><td><span class="pill off">固定</span></td><td>同上、月20.98万円</td><td class="n">251.8万円</td></tr>
+          <tr><td>人件費（給与・賞与・法定福利）</td><td class="n">809.2万円</td><td><span class="pill off">固定</span></td><td>売上と連動なし（決定係数0.13）</td><td class="n">957.0万円</td></tr>
+          <tr><td>管理諸費</td><td class="n">174.1万円</td><td><span class="pill ng">固定・要確認</span></td><td>やや売上と連動（決定係数0.10）、11月に39.8万円</td><td class="n">174.1万円</td></tr>
+          <tr><td>租税公課</td><td class="n">90.7万円</td><td><span class="pill ng">固定・要確認</span></td><td>3月43.6万・7月44.6万円（共通部）</td><td class="n">90.7万円</td></tr>
+          <tr><td>減価償却費</td><td class="n">52.9万円</td><td><span class="pill off">固定</span></td><td>毎月4.4万円</td><td class="n">52.9万円</td></tr>
+          <tr><td>旅費交通費</td><td class="n">37.4万円</td><td><span class="pill ng">固定・要確認</span></td><td>売上と連動なし</td><td class="n">37.4万円</td></tr>
+          <tr><td>システム関連費</td><td class="n">23.7万円</td><td><span class="pill off">固定</span></td><td>毎月1.75万円</td><td class="n">23.7万円</td></tr>
+          <tr><td>消耗品費・通信費・広告宣伝費・保険料・その他</td><td class="n">65.0万円</td><td><span class="pill off">固定</span></td><td>売上と連動なし</td><td class="n">65.0万円</td></tr>
+          <tr class="total"><td>固定費の計</td><td class="n">1,504.6万円</td><td></td><td>本部費（年189.6万円）は含まない</td><td class="n">1,652.4万円</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
   <p class="note">固定費＝店舗の固定経費＋テナント経費の固定部分＋人件費＋本部費など。テナント経費は前年12か月の実績から「固定 約21.0万円/月＋売上の6.92%」に分解（決定係数0.94）。そのため売上100万円の上積みで残る利益は粗利率35%なら約28万円（限界利益率28.1%）で、35万円ではありません。</p>
 </section>
 
