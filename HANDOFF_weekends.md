@@ -6,7 +6,7 @@
 
 | 使うもの | 開き方 |
 |---|---|
-| **Excel（本番）** | Googleドライブ「Weekends_予算と報奨金案_売上6300万_粗利2150万.xlsx」をダウンロードしてExcelで開く。リポジトリでは `excel/Weekends_予算と報奨金案_粗利2150万円.xlsx` |
+| **Excel（本番）** | claude.ai のこのセッション（Weekends 予算・報奨金）の最新のファイルカードからダウンロード、またはGitHub ayataka20/margin-calculator のブランチ `claude/weekend-bonus-simulation-o1xuuf` の `excel/Weekends_予算と報奨金案_粗利2150万円.xlsx` を「Download raw file」で保存してExcelで開く |
 | 社長向け資料 | https://claude.ai/code/artifact/80e12aa4-0f5c-4a99-bfeb-bf950b2f24a1 （ブラウザで開く。PDF・Wordに書き出し可） |
 | シミュレーター（参考） | https://claude.ai/artifact/YHmR55Uk8TPAph1PUbFX1W （前提は旧案のまま） |
 | Claudeで続きをやる | claude.ai/code またはClaudeデスクトップアプリで、リポジトリ ayataka20/margin-calculator・ブランチ `claude/weekend-bonus-simulation-o1xuuf` を開き「HANDOFF_weekends.md を読んで続きから」と頼む |
