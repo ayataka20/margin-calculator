@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Weekends 報奨金シミュレーター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700&family=Roboto+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 計算書のように上から「事実 → 損益分岐 → シミュレーション → 報奨金 → 論点」と読み下す1カラム。数字は等幅で桁を揃える */
+:root{
+  --main:#0a5c8a; --main-dark:#073f5f; --main-soft:#e3eef5;
+  --bg:#f4f6f7; --card:#ffffff; --line:#e2e6e8; --line-strong:#c9d1d5;
+  --text:#1f2621; --muted:#6b7570;
+  --warn:#c0392b; --warn-bg:#fdecea; --ok:#0a7d3c; --ok-bg:#e7f6ec; --mid:#9a6400; --mid-bg:#fdf3df;
+  --head-bg:#073f5f; --head-fg:#ffffff;
+  --font-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+  --font-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --font-num:"Roboto Mono","BIZ UDPGothic",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --main:#5fb0e0; --main-dark:#a9d4ef; --main-soft:#16303f;
+    --bg:#0f1518; --card:#172025; --line:#2a363d; --line-strong:#3b4a52;
+    --text:#e3e8ea; --muted:#95a1a7;
+    --warn:#ff8a7a; --warn-bg:#3a1f1c; --ok:#5fd393; --ok-bg:#14301f; --mid:#f0b85a; --mid-bg:#3a2c12;
+    --head-bg:#12324a; --head-fg:#e3e8ea;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --main:#5fb0e0; --main-dark:#a9d4ef; --main-soft:#16303f;
+  --bg:#0f1518; --card:#172025; --line:#2a363d; --line-strong:#3b4a52;
+  --text:#e3e8ea; --muted:#95a1a7;
+  --warn:#ff8a7a; --warn-bg:#3a1f1c; --ok:#5fd393; --ok-bg:#14301f; --mid:#f0b85a; --mid-bg:#3a2c12;
+    --head-bg:#12324a; --head-fg:#e3e8ea;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.7}
+header.top{background:var(--head-bg);color:var(--head-fg);padding-block:18px 16px;padding-inline:16px}
+header.top .inner{max-width:980px;margin:0 auto}
+header.top h1{font-family:var(--font-display);font-size:24px;margin:0;letter-spacing:.04em;text-wrap:balance}
+header.top p{margin:4px 0 0;font-size:13px;opacity:.9}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav.toc .inner{max-width:980px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding-inline:12px;padding-block:6px;scrollbar-width:thin}
+nav.toc a{flex:0 0 auto;font-size:13px;color:var(--main-dark);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--main-soft);outline:none}
+main{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:flex;flex-direction:column;gap:28px}
+section{min-width:0}
+h2{font-family:var(--font-display);font-size:20px;margin:0 0 4px;color:var(--main-dark);text-wrap:balance}
+h2 .no{font-family:var(--font-num);font-size:13px;color:var(--muted);margin-right:8px;letter-spacing:.06em}
+h3{font-size:15px;margin:18px 0 6px;color:var(--text)}
+.lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:68ch}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.num,.tbl td.n,.tbl th.n{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.kpi .k{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.kpi .v{font-family:var(--font-num);font-size:22px;font-weight:600;line-height:1.3;margin-top:2px}
+.kpi .s{font-size:12px;color:var(--muted)}
+.v.neg{color:var(--warn)} .v.pos{color:var(--ok)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.tbl{border-collapse:collapse;width:100%;font-size:13.5px}
+.tbl th,.tbl td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font-weight:700;font-size:12px;color:var(--muted);background:var(--bg);white-space:nowrap}
+.tbl td.n,.tbl th.n{text-align:right;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.total td{font-weight:700;border-top:2px solid var(--line-strong)}
+.tbl tr.hl td{background:var(--main-soft)}
+.tbl input{width:96px;padding:4px 6px;font-size:13px;text-align:right;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);color:var(--text);font-family:var(--font-num)}
+.neg{color:var(--warn)} .pos{color:var(--ok)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.ng{background:var(--warn-bg);color:var(--warn)} .pill.mid{background:var(--mid-bg);color:var(--mid)} .pill.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+/* forms */
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 14px}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field label{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--line-strong);border-radius:8px;font-size:16px;background:var(--card);color:var(--text);font-family:var(--font-num)}
+.field select{font-family:var(--font-body);font-size:15px}
+.field .hint{font-size:11.5px;color:var(--muted);font-family:var(--font-num)}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--main);outline-offset:1px}
+details.adv{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+details.adv summary{cursor:pointer;font-size:13px;color:var(--main-dark);font-weight:700}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:10px}
+.check input{width:18px;height:18px}
+button.btn{font:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid var(--line-strong);background:var(--card);color:var(--main-dark);cursor:pointer}
+button.btn:hover{background:var(--main-soft)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* results */
+.answer{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.answer .a{border-left:3px solid var(--main);padding:4px 0 4px 10px;min-width:0}
+.answer .a .k{font-size:12px;color:var(--muted)}
+.answer .a .v{font-family:var(--font-num);font-size:24px;font-weight:600;color:var(--main-dark);line-height:1.25}
+.answer .a .s{font-size:12px;color:var(--muted);font-family:var(--font-num)}
+.stack{display:flex;height:26px;border-radius:6px;overflow:hidden;margin-top:14px;border:1px solid var(--line)}
+.stack span{display:block;height:100%;min-width:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.c1{background:var(--main)} .c2{background:var(--mid)} .c3{background:var(--warn)} .c4{background:var(--ok)}
+.err{background:var(--warn-bg);color:var(--warn);padding:8px 10px;border-radius:8px;font-size:13px;margin-top:10px}
+/* waterfall */
+.wf{display:flex;flex-direction:column;gap:6px}
+.wf-row{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 6.5em;gap:10px;align-items:center}
+.wf-row .lab{font-size:13px;line-height:1.35;min-width:0}
+.wf-row .lab small{display:block;color:var(--muted);font-size:11.5px}
+.wf-row .track{position:relative;height:22px;background:var(--bg);border-radius:4px}
+.wf-row .bar{position:absolute;top:3px;bottom:3px;border-radius:3px}
+.wf-row .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--line-strong)}
+.wf-row .val{font-family:var(--font-num);font-size:13px;text-align:right;white-space:nowrap}
+.wf-row.total .lab{font-weight:700}
+.bar.up{background:var(--ok)} .bar.down{background:var(--warn)} .bar.tot{background:var(--main-dark)}
+@media (max-width:560px){.wf-row{grid-template-columns:minmax(0,1fr) 6em}.wf-row .track{grid-column:1 / -1;order:3}}
+/* heat */
+.heat td.n{min-width:74px}
+#staffTbl input{width:78px}
+#staffTbl td,#staffTbl th{padding:6px 6px}
+.heat td.cur{outline:2px solid var(--main);outline-offset:-2px;font-weight:700}
+/* memo */
+.memo{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.memo .panel h3{margin-top:0;font-size:15px;color:var(--main-dark)}
+.memo .panel h3 .tag{font-family:var(--font-num);font-size:12px;color:var(--muted);margin-right:6px}
+.memo ul,.memo ol{margin:0;padding-left:1.2em;font-size:13.5px}
+.memo li{margin-bottom:5px}
+.memo li b{color:var(--text)}
+.checklist{list-style:none;padding-left:0 !important}
+.checklist li::before{content:"□ ";color:var(--main)}
+.note{font-size:12px;color:var(--muted);margin-top:8px;max-width:72ch}
+.src li{font-size:12.5px;color:var(--muted)}
+.callout{background:var(--main-soft);border-radius:10px;padding:12px 14px;font-size:14px}
+.callout b{color:var(--main-dark)}
+footer{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 32px;font-size:12px;color:var(--muted)}
+footer a{color:var(--main-dark)}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;scroll-behavior:auto !important}}
+@media print{nav.toc,.btn-row,details.adv{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="inner">
+    <h1>Weekends 報奨金シミュレーター</h1>
+    <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。</p>
+  </div>
+</header>
+<nav class="toc" aria-label="ページ内の移動">
+  <div class="inner">
+    <a href="#facts">現状</a>
+    <a href="#bridge">財務と管理のつなぎ</a>
+    <a href="#bep">損益分岐点</a>
+    <a href="#sim">必要粗利・売上</a>
+    <a href="#budget">予算案の比較</a>
+    <a href="#bonus">報奨金</a>
+    <a href="#memo">社長との論点</a>
+    <a href="#src">データ出所</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ 1. 現状 ============ -->
+<section id="facts">
+  <h2><span class="no">1</span>前年度の実績</h2>
+  <p class="lead">2025年8月〜2026年7月。財務は発展会計の全社損益（税抜）、管理会計はGoogleスプレッドシート「2026 グランファミーユ」の実績表。</p>
+  <div class="kpis">
+    <div class="kpi"><div class="k">売上高</div><div class="v">5,366万円</div><div class="s">前々年 6,424万円から −16.5%</div></div>
+    <div class="kpi"><div class="k">粗利額（粗利率）</div><div class="v">1,661万円</div><div class="s">31.0%（前々年 34.3%）</div></div>
+    <div class="kpi"><div class="k">営業損益（財務・発展会計）</div><div class="v neg">−215万円</div><div class="s">人件費は実際の支払額</div></div>
+    <div class="kpi"><div class="k">営業損益（管理会計）</div><div class="v neg">−521万円</div><div class="s">本部費・人件費の定額を含む</div></div>
+    <div class="kpi"><div class="k">本部費（毎月の定額）</div><div class="v">15.8万円/月</div><div class="s">年189.6万円・管理会計の「共通費」</div></div>
+    <div class="kpi"><div class="k">在庫（原価）</div><div class="v">2,250万円</div><div class="s">期首・期末ほぼ同額／回転日数 約220日</div></div>
+  </div>
+  <p class="note">本部費15.8万円/月は、グループ共通費 年5,422万円を人員割（グラン2人／グループ計57.5人、パートは0.5人換算）で按分した額（「人件費例 ヤタカグループ 管理会計表」配賦額(7)）。売上や店の努力では変わらない固定額です。同じ表には役員報酬の配賦案（月30万〜48.9万円）もありますが、管理会計シートには入っていません。</p>
+</section>
+
+<!-- ============ 2. ブリッジ ============ -->
+<section id="bridge">
+  <h2><span class="no">2</span>財務PLと管理会計PLのつなぎ</h2>
+  <p class="lead">同じ1年でも、財務（発展会計）は−215万円、管理会計は−521万円。差の306万円は2項目だけで説明できます。社長と「どちらの数字で目標を置くか」を最初に揃えるための図です。</p>
+  <div class="panel">
+    <div class="wf" id="wf"></div>
+    <p class="note">店舗直接利益＝発展会計「営業部」の営業損益（人件費を含まない）。共通部の実費は主に租税公課（3月・7月計上）など。管理会計の人件費は毎月85万円の定額で、実際の支払い（給与・賞与・法定福利、月平均67.4万円）より年211万円多い。この差の中身（新しく入る人の見込みか、役員分か）は確認が必要です。</p>
+  </div>
+</section>
+
+<!-- ============ 3. 損益分岐点 ============ -->
+<section id="bep">
+  <h2><span class="no">3</span>損益分岐点は3段階ある</h2>
+  <p class="lead">どの費用までを店が稼ぐ前提にするかで、必要な売上が変わります。粗利率は下の「必要粗利・売上」の設定値（初期値35%）を使っています。</p>
+  <div class="tbl-wrap">
+    <table class="tbl" id="bepTbl">
+      <thead><tr><th>段階</th><th class="n">年間の固定費</th><th class="n">必要な粗利額</th><th class="n">必要な売上</th><th class="n">前年比</th><th class="n">月平均の売上</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="note">固定費＝店舗の固定経費＋テナント経費の固定部分＋人件費＋本部費など。テナント経費は前年12か月の実績から「固定 約21.0万円/月＋売上の6.92%」に分解（決定係数0.94）。そのため売上100万円の上積みで残る利益は粗利率35%なら約28万円（限界利益率28.1%）で、35万円ではありません。</p>
+</section>
+
+<!-- ============ 4. シミュレーター ============ -->
+<section id="sim">
+  <h2><span class="no">4</span>必要な粗利額と売上を計算する</h2>
+  <p class="lead">「利益をいくら残したいか」から逆算して、必要な粗利額 → 必要な売上 → その粗利率で届くか、の順に出します。右の表は粗利率ごとの必要売上です。</p>
+  <div class="grid2">
+    <div class="panel">
+      <div class="fields">
+        <div class="field">
+          <label for="basis">どの費用まで賄うか</label>
+          <select id="basis">
+            <option value="fin">財務（発展会計の実額）＋新規パート</option>
+            <option value="mgmt">管理会計（本部費・人件費定額）</option>
+            <option value="full">管理会計＋役員報酬配賦（参考）</option>
+            <option value="custom">手入力（詳細設定の値）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gpRate">粗利率（%）</label>
+          <input id="gpRate" type="number" inputmode="decimal" step="0.5" value="35">
+          <span class="hint">前年 31.0%／前々年 34.3%</span>
+        </div>
+        <div class="field">
+          <label for="targetOp">残したい営業利益（円/年）</label>
+          <input id="targetOp" type="number" inputmode="numeric" step="100000" value="0">
+          <span class="hint" id="targetOpHint"></span>
+        </div>
+        <div class="field">
+          <label for="days">営業日数（日/年）</label>
+          <input id="days" type="number" inputmode="numeric" step="1" value="313">
+          <span class="hint">水曜定休なら313日／前年269日（未確認）</span>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="incInclude" checked> 報奨金（100%達成時の年額）を費用に含める <span class="num" id="incIncludeVal"></span></label>
+      <details class="adv">
+        <summary>詳細設定（費用の内訳）</summary>
+        <div class="fields" style="margin-top:10px">
+          <div class="field"><label for="storeFix">店舗の固定経費（円/年）</label><input id="storeFix" type="number" step="10000" value="3493268"><span class="hint">営業部の販管費からテナント経費を除いた額</span></div>
+          <div class="field"><label for="tenantFixM">テナント経費の固定部分（円/月）</label><input id="tenantFixM" type="number" step="1000" value="209792"></div>
+          <div class="field"><label for="tenantVar">テナント経費の売上連動率（%）</label><input id="tenantVar" type="number" step="0.1" value="6.92"></div>
+          <div class="field"><label for="labor">人件費（円/年）</label><input id="labor" type="number" step="10000" value="8091567"><span class="hint">実額809.2万／管理会計1,020万</span></div>
+          <div class="field"><label for="addLabor">追加の人件費（円/年）</label><input id="addLabor" type="number" step="10000" value="1095120"><span class="hint">9/22試算の新規パート（時給1,053円×週20h）</span></div>
+          <div class="field"><label for="common">本部費・共通部（円/年）</label><input id="common" type="number" step="10000" value="943852"><span class="hint">実費94.4万／管理会計189.6万</span></div>
+          <div class="field"><label for="officer">役員報酬の配賦（円/年）</label><input id="officer" type="number" step="10000" value="0"><span class="hint">配賦表の調整案 月30万円＝360万円</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="panel" style="min-width:0">
+      <div class="answer">
+        <div class="a"><div class="k">必要な粗利額</div><div class="v" id="outGp">—</div><div class="s" id="outGpSub"></div></div>
+        <div class="a"><div class="k">必要な売上</div><div class="v" id="outS">—</div><div class="s" id="outSSub"></div></div>
+        <div class="a"><div class="k">1日あたりの売上</div><div class="v" id="outDay">—</div><div class="s" id="outDaySub"></div></div>
+      </div>
+      <div class="stack" id="stack" aria-hidden="true"></div>
+      <div class="legend" id="stackLegend"></div>
+      <div id="simErr" class="err" hidden></div>
+      <h3>粗利率ごとの必要売上</h3>
+      <div class="tbl-wrap">
+        <table class="tbl" id="rateTbl"><thead><tr><th>粗利率</th><th class="n">必要な粗利額</th><th class="n">必要な売上</th><th class="n">前年比</th><th class="n">1日あたり</th></tr></thead><tbody></tbody></table>
+      </div>
+      <h3>売上目標から逆算する</h3>
+      <div class="fields">
+        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="60000000"><span class="hint" id="revSalesHint"></span></div>
+        <div class="field"><label>この売上で必要な粗利率</label><div class="num" style="font-size:22px;font-weight:600;color:var(--main-dark)" id="revOut">—</div><span class="hint" id="revOutSub"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>売上 × 粗利率 の営業損益表（報奨金前）</h3>
+  <p class="lead" id="heatLead">上で選んだ費用の範囲で計算。緑が黒字、赤が赤字。枠は「残したい営業利益」に一番近い組み合わせです。</p>
+  <div class="tbl-wrap"><table class="tbl heat" id="heatTbl"></table></div>
+</section>
+
+<!-- ============ 5. 予算案の比較 ============ -->
+<section id="budget">
+  <h2><span class="no">5</span>予算案の比較</h2>
+  <p class="lead">いま出ている数字を同じ物差しで並べます。粗利率は上の設定値（前年並み案だけ前年実績の31.0%）。営業損益は報奨金を払う前の額です。</p>
+  <div class="tbl-wrap">
+    <table class="tbl" id="budgetTbl"><thead><tr><th>案</th><th class="n">売上（税抜）</th><th class="n">前年比</th><th class="n">粗利率</th><th class="n">粗利額</th><th class="n">1日あたり</th><th class="n">営業損益（財務＋新規パート）</th><th class="n">営業損益（管理）</th></tr></thead><tbody></tbody></table>
+  </div>
+  <p class="note">前年並み案の財務欄は新規パート110万円を加えた試算のため、前年実績（−215万円）より低く出ます。スマレジに登録されている店舗予算は年6,000万円（8月350万・12月700万・2月350万など月別）。スマレジの売上集計が税込なら、税抜では5,455万円で、9/22案の6,000万円（税抜）とは約545万円違います。どちらの意味の6,000万円かを最初に確認してください。</p>
+</section>
+
+<!-- ============ 6. 報奨金 ============ -->
+<section id="bonus">
+  <h2><span class="no">6</span>報奨金の試算（単月判定）</h2>
+  <p class="lead">9/22の方針「粗利額8：売上高2」と、9/29の決定「まず単月で評価」を反映した設計。月の目標を月別に配分し、毎月スコアで段階を判定します。実績欄に数字を入れると、その月は実績で判定します。</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3 style="margin-top:0">目標と判定ルール</h3>
+      <div class="fields">
+        <div class="field"><label for="tgtSales">年間の目標売上（円）</label><input id="tgtSales" type="number" step="1000000" value="60000000"><span class="hint" id="tgtSalesHint"></span></div>
+        <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.5" value="35"><span class="hint" id="tgtGpHint"></span></div>
+        <div class="field"><label for="alloc">月への配分</label>
+          <select id="alloc"><option value="store">スマレジの店舗予算の月比率</option><option value="prev">前年実績の月比率</option></select></div>
+        <div class="field"><label for="wGp">粗利額の重み（%）</label><input id="wGp" type="number" step="5" value="80"><span class="hint" id="wHint">売上高の重み 20%</span></div>
+        <div class="field"><label for="gate">支給の前提：粗利達成率（%以上）</label><input id="gate" type="number" step="1" value="100"><span class="hint">未満なら売上が良くても0円</span></div>
+        <div class="field"><label>段階（スコア％以上）</label>
+          <div style="display:flex;gap:6px"><input id="th1" type="number" value="100" aria-label="第1段階" style="width:33%"><input id="th2" type="number" value="105" aria-label="第2段階" style="width:33%"><input id="th3" type="number" value="110" aria-label="第3段階" style="width:33%"></div></div>
+      </div>
+      <h3>1人あたりの月額（円）</h3>
+      <div class="tbl-wrap">
+        <table class="tbl" id="staffTbl">
+          <thead><tr><th>区分</th><th class="n">人数</th><th class="n">第1段階</th><th class="n">第2段階</th><th class="n">第3段階</th></tr></thead>
+          <tbody>
+            <tr><td>店長</td><td class="n"><input id="s0c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s0a" type="number" step="1000" value="8000"></td><td class="n"><input id="s0b" type="number" step="1000" value="13000"></td><td class="n"><input id="s0d" type="number" step="1000" value="18000"></td></tr>
+            <tr><td>古参パート</td><td class="n"><input id="s1c" type="number" value="1" style="width:56px"></td><td class="n"><input id="s1a" type="number" step="1000" value="7000"></td><td class="n"><input id="s1b" type="number" step="1000" value="10000"></td><td class="n"><input id="s1d" type="number" step="1000" value="13000"></td></tr>
+            <tr><td>その他パート</td><td class="n"><input id="s2c" type="number" value="3" style="width:56px"></td><td class="n"><input id="s2a" type="number" step="1000" value="3000"></td><td class="n"><input id="s2b" type="number" step="1000" value="5000"></td><td class="n"><input id="s2d" type="number" step="1000" value="7000"></td></tr>
+            <tr class="total"><td>店舗合計（月）</td><td class="n" id="sumC"></td><td class="n" id="sumA"></td><td class="n" id="sumB"></td><td class="n" id="sumD"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">初期値は9/22案（四半期で店長2.5万／4万／5.5万円など）を月額に割り直した額。週8時間パートは対象外の想定。</p>
+    </div>
+    <div class="panel" style="min-width:0">
+      <h3 style="margin-top:0">想定シナリオ（実績未入力の月に使う）</h3>
+      <div class="fields">
+        <div class="field"><label for="scSales">売上の達成率（%）</label><input id="scSales" type="number" step="1" value="100"></div>
+        <div class="field"><label for="scGp">実際の粗利率（%）</label><input id="scGp" type="number" step="0.5" value="35"></div>
+        <div class="field"><label for="share">比較：超過利益シェア型の配分率（%）</label><input id="share" type="number" step="5" value="20"><span class="hint">目標超過で増えた利益のうち店に配る割合</span></div>
+      </div>
+      <div class="kpis" style="margin-top:14px" id="bonusKpis"></div>
+      <div id="bonusMsg" class="callout" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <h3>月別の判定表</h3>
+  <p class="lead">営業損益は上の「どの費用まで賄うか」の範囲。固定費は12等分、テナント経費の連動分は売上×連動率。実績はスマレジの粗利（売上−商品原価）を入れる想定です。</p>
+  <div class="tbl-wrap">
+    <table class="tbl" id="monthTbl">
+      <thead><tr><th>月</th><th class="n">目標売上</th><th class="n">目標粗利</th><th class="n">実績売上</th><th class="n">実績粗利</th><th class="n">粗利達成</th><th class="n">売上達成</th><th class="n">スコア</th><th>判定</th><th class="n">報奨金</th><th class="n">営業損益</th><th class="n">累計</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="btn-row"><button class="btn" type="button" id="clearActual">実績欄を空にする</button><button class="btn" type="button" id="resetAll">すべて初期値に戻す</button></div>
+
+  <h3>達成度ごとの年間比較（全月同じ達成度の場合）</h3>
+  <div class="tbl-wrap">
+    <table class="tbl" id="sensTbl"><thead><tr><th>達成度</th><th class="n">売上</th><th class="n">粗利</th><th class="n">報奨金（段階型）</th><th class="n">報奨金（シェア型）</th><th class="n">報奨金後 営業損益（財務）</th><th class="n">報奨金後 営業損益（管理）</th></tr></thead><tbody></tbody></table>
+  </div>
+  <p class="note">段階型は100%で支給が始まるため、報奨金を目標の利益計画に入れておく必要があります（4の「報奨金を費用に含める」）。シェア型は目標を超えた分の利益（粗利の増分−テナント連動分）から配るので、会社の利益が減ることはありませんが、100%ちょうどでは0円です。</p>
+</section>
+
+<!-- ============ 7. 論点 ============ -->
+<section id="memo">
+  <h2><span class="no">7</span>社長との論点メモ（10/2 予算会議用）</h2>
+  <p class="lead">数字は初期設定（粗利率35%・目標6,000万円・報奨金月2.4万円〜）で計算した値です。</p>
+  <div class="callout" style="margin-bottom:12px">
+    <b>一言でいうと：</b>「100%（売上6,000万円・粗利2,100万円）で店舗の実費と報奨金を賄って黒字、110%（6,600万円・2,310万円）で本部費まで含めた管理会計がほぼトントン」。段階の意味を損益分岐の段階と揃えると、現場にも社長にも説明しやすくなります。
+  </div>
+  <div class="memo">
+    <div class="panel">
+      <h3><span class="tag">A</span>現状認識（事実）</h3>
+      <ul>
+        <li>売上は2年で6,424万→5,366万円（−16.5%）、粗利率は34.3%→31.0%。粗利額は2,206万→1,661万円で545万円減。</li>
+        <li>営業損益は財務で−215万円、管理会計で−521万円。差の306万円は<b>人件費の定額計上（+211万）</b>と<b>本部費（+95万）</b>。</li>
+        <li>本部費は<b>月15.8万円の定額</b>（人員割）。店の努力では減らない費用。</li>
+        <li>会計の月次粗利は棚卸の計上で振れる（1月−25.6%、7月15.1%）。月の評価には使えない。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><span class="tag">B</span>目標の置き方</h3>
+      <ul>
+        <li>粗利率35%での損益分岐：財務 <b>5,750万円</b>／報奨金込み <b>5,850万円</b>／管理会計 <b>6,450万円</b>／役員報酬配賦込み 7,730万円（参考）。</li>
+        <li>6,000万円・35%なら財務で+71万円、管理会計で−126万円（いずれも報奨金前）。</li>
+        <li>9/22に話の出た「役員報酬込みで約7,000万円」は、配賦表の月30万円を入れると7,730万円。現場の目標にするには遠く、本部側の判断事項として分けるのが妥当。</li>
+        <li>スマレジの店舗予算6,000万円が税込なら税抜5,455万円。粗利率35%でも財務で−80万円。<b>税込・税抜を先に揃える</b>。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><span class="tag">C</span>達成の打ち手（粗利額＝売上×粗利率）</h3>
+      <ul>
+        <li><b>粗利率1ポイント＝年約60万円</b>（売上6,000万円時）。売上100万円の上積みで残るのは約28万円。つまり<b>粗利率1ポイントは売上約214万円分</b>。</li>
+        <li>31%→35%は+4ポイント＝+240万円。前々年は34.3%で、戻せない水準ではない。値引きの判断基準と仕入条件の見直しが先。</li>
+        <li>売上：313日営業なら1日19.2万円（前年は269日で19.9万円）。増えた営業日の平日売上が平均より低い可能性は残る。</li>
+        <li>在庫2,250万円（約220日分）。処分を進めると粗利率は一時的に下がる。処分品は報奨金の計算から外し、点数と原価回収額で別に追う。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><span class="tag">D</span>報奨金の設計（6つの要素）</h3>
+      <ol>
+        <li><b>原資</b>：段階型なら100%の利益計画に年29万円を織り込む。超過分から出すシェア型も比較できる（6の下の表）。</li>
+        <li><b>指標</b>：粗利額80%＋売上高20%のスコア。ただし<b>粗利100%未達なら0円</b>（値引きで売上を作るのを防ぐ）。売上にはメルカリ等のECを含め、手数料10%は粗利から差し引く。</li>
+        <li><b>期間</b>：判定は単月（9/29決定）。月の目標は店舗予算の月比率で季節差を吸収。</li>
+        <li><b>支払い</b>：判定は毎月、支払いは夏冬の賞与にまとめる案。毎月の給与に乗せるとパートの社会保険・扶養の線や標準報酬月額に影響しうる（社労士に確認）。</li>
+        <li><b>対象</b>：店舗全体で判定し、個人差はつけない（店長への依存を減らす）。</li>
+        <li><b>歯止め</b>：取り置きの月ずらし対策（会計日で判定、翌月初の取消・返品は前月から控除）。スマレジの原価未登録品は粗利100%に見えるので登録率を確認。年1回、会計の粗利と照合。</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3><span class="tag">E</span>10/2に決めること</h3>
+      <ul class="checklist">
+        <li>目標売上と粗利率（6,000万円・35%で良いか）</li>
+        <li>予算の税込・税抜の統一（スマレジ登録値の確認）</li>
+        <li>目標に本部費を含めるか（100%＝財務、110%＝管理会計の二段構え案）</li>
+        <li>報奨金の金額表と対象人数（その他パートは仮に3名）</li>
+        <li>支払い方法（毎月か、賞与にまとめるか）</li>
+        <li>処分品とEC（メルカリ・BASE）の扱い</li>
+        <li>値下げの決裁（店長決裁の範囲とオーナー決裁の線）</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><span class="tag">F</span>確認が必要なデータ</h3>
+      <ul>
+        <li>管理会計の人件費85万円/月の中身（実額は月平均67.4万円）。新しく入る人の見込みを含むか。</li>
+        <li>前年の営業日数269日（記憶ベース）と、今年の定休日。</li>
+        <li>スマレジの粗利の精度（原価登録率、値引きの計上方法）。</li>
+        <li>2026年8月・9月の実績（発展会計にはまだ入っていない）。入ったら6の実績欄へ。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. 出所 ============ -->
+<section id="src">
+  <h2><span class="no">8</span>データ出所と前提</h2>
+  <ul class="src">
+    <li>財務PL：発展会計 月次残高推移表「2026_Weekends_税抜_全社_20260922出力.csv」（2025/8〜2026/7、全社、税抜）。売上5,366.0万円、販管費1,875.9万円、営業損益−214.7万円。</li>
+    <li>店舗直接PL：「2026事業部 実績貼付用」グランシート（発展会計の営業部）。販管費972.4万円（人件費を含まない）。</li>
+    <li>管理会計PL：Googleスプレッドシート「2026 グランファミーユ」8月開始 実績表・人件費その他経費シート。人件費85万円/月、共通費15.8万円/月。</li>
+    <li>本部費の根拠：「人件費例 ヤタカグループ 管理会計表.xlsx」配賦額(7)（グループ共通費5,422万円の人員割）。</li>
+    <li>店舗予算：スマレジ「予算データ(店舗_管理下のすべての店舗_期間_202608-202707).csv」（年6,000万円、税込・税抜は未確認）。</li>
+    <li>方針：9/22・9/29の会議メモ（Gemini）と「2026-09-22_Weekends_目標粗利と報償制度試算_四半期版.xlsx」。</li>
+    <li>テナント経費の分解は2025/8〜2026/7の月次12点の回帰（固定209,792円/月＋売上×6.92%）。前回試算の「売上の11.6%すべて変動」より、売上が大きく動く場面の誤差が小さくなります。</li>
+    <li>Driveにある「試算表_エフレWeekends_FY2025.xlsx」（売上5,200万円などの丸めた数字）は発展会計の実績と一致しないため使っていません。</li>
+  </ul>
+</section>
+
+</main>
+<footer>
+  <p>入力内容はこのブラウザにだけ保存されます。<a href="index.html">利益計算ツール（商品単位）へ</a></p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const MONTHS=['8月','9月','10月','11月','12月','1月','2月','3月','4月','5月','6月','7月'];
+const PREV_SALES=[3040292,3638478,4934704,5149749,6820952,4850701,2795656,4419804,3581469,4799124,4888307,4741065];
+const STORE_BUDGET=[3500000,4500000,5500000,5500000,7000000,6000000,3500000,5500000,4500000,4500000,5500000,4500000];
+const S0=53660301, GP0=16612146;
+const PRESET={
+  fin:{labor:8091567, addLabor:1095120, common:943852, officer:0},
+  mgmt:{labor:10200000, addLabor:0, common:1896000, officer:0},
+  full:{labor:10200000, addLabor:0, common:1896000, officer:3600000}
+};
+const BRIDGE=[
+  {lab:'店舗直接利益',sub:'発展会計 営業部（人件費前）',v:6888617,type:'tot'},
+  {lab:'人件費（実額）',sub:'給与・賞与・法定福利',v:-8091567,type:'step'},
+  {lab:'共通部の実費',sub:'租税公課など',v:-943852,type:'step'},
+  {lab:'営業損益（財務）',sub:'発展会計 全社',v:-2146802,type:'tot'},
+  {lab:'人件費の定額計上',sub:'85万円/月 − 実額',v:-2108433,type:'step'},
+  {lab:'本部費の定額計上',sub:'15.8万円/月 − 共通部実費',v:-952148,type:'step'},
+  {lab:'営業損益（管理会計）',sub:'Googleシート 実績表',v:-5207383,type:'tot'}
+];
+const IDS=['basis','gpRate','targetOp','days','incInclude','storeFix','tenantFixM','tenantVar','labor','addLabor','common','officer','revSales','tgtSales','tgtGp','alloc','wGp','gate','th1','th2','th3','s0c','s0a','s0b','s0d','s1c','s1a','s1b','s1d','s2c','s2a','s2b','s2d','scSales','scGp','share'];
+const DEFAULTS={};
+const $=id=>document.getElementById(id);
+const val=id=>{const el=$(id); if(!el) return 0; const v=parseFloat(String(el.value).replace(/,/g,'')); return isFinite(v)?v:0;};
+const fmtMan=(v,d)=>{d=d||0; const s=(Math.abs(v)/1e4).toLocaleString('ja-JP',{minimumFractionDigits:d,maximumFractionDigits:d}); return (v<0?'−':'')+s+'万円';};
+const fmtManS=(v,d)=>(v>0?'+':'')+fmtMan(v,d);
+const fmtYen=v=>(v<0?'−':'')+Math.round(Math.abs(v)).toLocaleString('ja-JP')+'円';
+const fmtPct=(v,d)=>(v*100).toFixed(d===undefined?1:d)+'%';
+const cls=v=>v<0?'neg':(v>0?'pos':'');
+
+// ---- storage (per-viewer convenience) ----
+const KEY='weekends-bonus-sim-v1';
+function save(){
+  try{
+    const o={};
+    IDS.forEach(id=>{const el=$(id); if(el) o[id]=el.type==='checkbox'?el.checked:el.value;});
+    for(let i=0;i<12;i++){o['aS'+i]=$('aS'+i)?$('aS'+i).value:''; o['aG'+i]=$('aG'+i)?$('aG'+i).value:'';}
+    localStorage.setItem(KEY,JSON.stringify(o));
+  }catch(e){}
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY); if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){return null;}
+}
+
+// ---- cost model ----
+function shared(){return {storeFix:val('storeFix'), tenantFix:val('tenantFixM')*12, v:val('tenantVar')/100};}
+function fixedFrom(p){const s=shared(); return s.storeFix+s.tenantFix+p.labor+p.addLabor+p.common+p.officer;}
+function currentFixed(){return fixedFrom({labor:val('labor'),addLabor:val('addLabor'),common:val('common'),officer:val('officer')});}
+function opOf(F,S,GP){return GP-shared().v*S-F;}
+
+// ---- staff / tiers ----
+function staffSums(){
+  let c=0,a=0,b=0,d=0;
+  for(let i=0;i<3;i++){const n=val('s'+i+'c'); c+=n; a+=n*val('s'+i+'a'); b+=n*val('s'+i+'b'); d+=n*val('s'+i+'d');}
+  return {c:c,t:[0,a,b,d]};
+}
+function tierOf(gpAch,sAch){
+  const w=Math.min(100,Math.max(0,val('wGp')))/100;
+  const score=w*gpAch+(1-w)*sAch;
+  const gate=val('gate')/100;
+  let tier=0;
+  if(gpAch>=gate-1e-9){
+    if(score>=val('th3')/100-1e-9) tier=3; else if(score>=val('th2')/100-1e-9) tier=2; else if(score>=val('th1')/100-1e-9) tier=1;
+  }
+  return {score:score,tier:tier,gated:gpAch<gate-1e-9};
+}
+function incAt100(){return staffSums().t[1]*12;}
+
+// ---- render: bridge ----
+function renderBridge(){
+  let run=0; const pts=[0];
+  BRIDGE.forEach(b=>{ if(b.type==='tot'){run=b.v;} else {run+=b.v;} pts.push(run); });
+  const min=Math.min.apply(null,pts.concat([0])), max=Math.max.apply(null,pts.concat([0]));
+  const span=max-min||1; const x=v=>(v-min)/span*100;
+  let html=''; run=0;
+  BRIDGE.forEach(b=>{
+    let from,to,c;
+    if(b.type==='tot'){from=0;to=b.v;c='tot';run=b.v;}
+    else{from=run;to=run+b.v;run=to;c=b.v<0?'down':'up';}
+    const l=x(Math.min(from,to)), w=Math.max(0.6,Math.abs(x(to)-x(from)));
+    html+='<div class="wf-row'+(b.type==='tot'?' total':'')+'"><div class="lab">'+b.lab+'<small>'+b.sub+'</small></div>'+
+      '<div class="track"><span class="zero" style="left:'+x(0)+'%"></span><span class="bar '+c+'" style="left:'+l+'%;width:'+w+'%"></span></div>'+
+      '<div class="val '+(b.type==='tot'?cls(b.v):'')+'">'+fmtManS(b.v,1)+'</div></div>';
+  });
+  $('wf').innerHTML=html;
+}
+
+// ---- render: BEP ladder ----
+function renderBep(g){
+  const s=shared();
+  const rows=[
+    {name:'① 財務：店の実費だけ',sub:'発展会計の実額',p:{labor:PRESET.fin.labor,addLabor:0,common:PRESET.fin.common,officer:0}},
+    {name:'② ①＋新規パート',sub:'9/22試算の追加人員',p:PRESET.fin},
+    {name:'③ ②＋報奨金（100%時）',sub:'段階型の年額',p:PRESET.fin,inc:true},
+    {name:'④ 管理会計（本部費込み）',sub:'Googleシートの費用',p:PRESET.mgmt},
+    {name:'⑤ ④＋役員報酬配賦（参考）',sub:'配賦表の調整案 月30万円',p:PRESET.full}
+  ];
+  let html='';
+  rows.forEach((r,i)=>{
+    const F=fixedFrom(r.p)+(r.inc?incAt100():0);
+    const S=g>s.v?F/(g-s.v):NaN;
+    html+='<tr'+(i===3?' class="hl"':'')+'><td>'+r.name+'<br><small style="color:var(--muted)">'+r.sub+'</small></td><td class="n">'+fmtMan(F,1)+'</td><td class="n">'+(isFinite(S)?fmtMan(g*S):'—')+'</td><td class="n"><b>'+(isFinite(S)?fmtMan(S):'—')+'</b></td><td class="n">'+(isFinite(S)?fmtPct(S/S0,0):'—')+'</td><td class="n">'+(isFinite(S)?fmtMan(S/12,1):'—')+'</td></tr>';
+  });
+  $('bepTbl').querySelector('tbody').innerHTML=html;
+}
+
+// ---- render: simulator ----
+function renderSim(){
+  const g=val('gpRate')/100, s=shared(), F=currentFixed();
+  const I=$('incInclude').checked?incAt100():0, P=val('targetOp'), days=Math.max(1,val('days'));
+  $('incIncludeVal').textContent='（'+fmtYen(incAt100())+'）';
+  $('targetOpHint').textContent='= '+fmtMan(P,1);
+  const err=$('simErr');
+  if(g<=s.v){err.hidden=false; err.textContent='粗利率がテナント経費の売上連動率（'+fmtPct(s.v)+'）以下のため、売上を増やしても利益が増えません。粗利率を見直してください。'; return;}
+  err.hidden=true;
+  const S=(F+I+P)/(g-s.v), GP=g*S;
+  $('outGp').textContent=fmtMan(GP);
+  $('outGpSub').textContent='前年 '+fmtMan(GP0)+'（'+fmtPct(GP/GP0,0)+'）';
+  $('outS').textContent=fmtMan(S);
+  $('outSSub').textContent='前年比 '+fmtPct(S/S0,0)+'・月平均 '+fmtMan(S/12,1);
+  $('outDay').textContent=fmtMan(S/days,1);
+  $('outDaySub').textContent=days+'日営業（前年 19.9万円）';
+  // stack: GP = F + vS + I + P
+  const parts=[{k:'固定費',v:F,c:'c1'},{k:'テナント連動',v:s.v*S,c:'c2'},{k:'報奨金',v:I,c:'c3'},{k:'営業利益',v:Math.max(0,P),c:'c4'}];
+  const tot=parts.reduce((a,b)=>a+b.v,0)||1;
+  $('stack').innerHTML=parts.map(p=>'<span class="'+p.c+'" style="width:'+(p.v/tot*100)+'%"></span>').join('');
+  $('stackLegend').innerHTML='粗利の使い道：'+parts.map(p=>'<span><i class="'+p.c+'"></i>'+p.k+' '+fmtMan(p.v)+'</span>').join('');
+  // rate table
+  let html='';
+  [0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38].forEach(r=>{
+    const Sr=(F+I+P)/(r-s.v);
+    html+='<tr'+(Math.abs(r-g)<1e-9?' class="hl"':'')+'><td class="n">'+fmtPct(r,0)+'</td><td class="n">'+fmtMan(r*Sr)+'</td><td class="n">'+fmtMan(Sr)+'</td><td class="n">'+fmtPct(Sr/S0,0)+'</td><td class="n">'+fmtMan(Sr/days,1)+'</td></tr>';
+  });
+  $('rateTbl').querySelector('tbody').innerHTML=html;
+  // reverse
+  const Sr=val('revSales');
+  $('revSalesHint').textContent='= '+fmtMan(Sr)+'（前年比 '+fmtPct(Sr/S0,0)+'）';
+  if(Sr>0){const gr=(F+I+P)/Sr+s.v; $('revOut').textContent=fmtPct(gr); $('revOutSub').textContent='必要な粗利額 '+fmtMan(gr*Sr)+'（前年の粗利率 31.0%）';}
+  // heat
+  const rates=[0.30,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38];
+  const sales=[];for(let x=50000000;x<=70000000;x+=2500000)sales.push(x);
+  let best={d:Infinity,r:-1,c:-1};
+  rates.forEach((r,ri)=>sales.forEach((sv,ci)=>{const op=r*sv-s.v*sv-F; const d=Math.abs(op-P); if(d<best.d){best={d:d,r:ri,c:ci};}}));
+  const maxAbs=Math.max.apply(null,rates.map(r=>Math.max.apply(null,sales.map(sv=>Math.abs(r*sv-s.v*sv-F)))))||1;
+  let h='<thead><tr><th>粗利率＼売上</th>'+sales.map(sv=>'<th class="n">'+(sv/1e4).toLocaleString('ja-JP')+'万</th>').join('')+'</tr></thead><tbody>';
+  rates.forEach((r,ri)=>{
+    h+='<tr><th class="n">'+fmtPct(r,0)+'</th>';
+    sales.forEach((sv,ci)=>{
+      const op=r*sv-s.v*sv-F; const a=Math.min(1,Math.abs(op)/maxAbs);
+      const col=op>=0?'var(--ok)':'var(--warn)';
+      const bg='color-mix(in srgb, '+col+' '+Math.round(8+a*34)+'%, var(--card))';
+      h+='<td class="n'+(ri===best.r&&ci===best.c?' cur':'')+'" style="background:'+bg+'">'+fmtManS(op)+'</td>';
+    });
+    h+='</tr>';
+  });
+  $('heatTbl').innerHTML=h+'</tbody>';
+  const bsel=$('basis'); $('heatLead').textContent='「'+bsel.options[bsel.selectedIndex].text+'」の費用で計算（報奨金前）。緑が黒字、赤が赤字。枠は「残したい営業利益」に一番近い組み合わせです。';
+  renderBep(g);
+  renderBudget(g);
+}
+
+// ---- render: budget comparison ----
+function renderBudget(g){
+  const s=shared(), Ff=fixedFrom(PRESET.fin), Fm=fixedFrom(PRESET.mgmt);
+  const Sm=Fm/(g-s.v);
+  const rows=[
+    {n:'前年並み（2026年度実績）',S:S0,g:GP0/S0},
+    {n:'スマレジ店舗予算（税込6,000万円の場合）',S:60000000/1.1,g:g},
+    {n:'9/22案（税抜6,000万円）',S:60000000,g:g},
+    {n:'管理会計の損益分岐（本部費込み）',S:Sm,g:g}
+  ];
+  const days=Math.max(1,val('days'));
+  $('budgetTbl').querySelector('tbody').innerHTML=rows.map((r,i)=>{
+    const GP=r.g*r.S, of=opOf(Ff,r.S,GP), om=opOf(Fm,r.S,GP);
+    return '<tr'+(i===2?' class="hl"':'')+'><td>'+r.n+'</td><td class="n">'+fmtMan(r.S)+'</td><td class="n">'+fmtPct(r.S/S0,1)+'</td><td class="n">'+fmtPct(r.g)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtMan(r.S/days,1)+'</td><td class="n '+cls(of)+'">'+fmtManS(of)+'</td><td class="n '+cls(om)+'">'+fmtManS(om)+'</td></tr>';
+  }).join('');
+}
+
+// ---- render: bonus ----
+function monthTargets(){
+  const St=val('tgtSales'), gt=val('tgtGp')/100;
+  const base=$('alloc').value==='prev'?PREV_SALES:STORE_BUDGET;
+  const tot=base.reduce((a,b)=>a+b,0);
+  return base.map(b=>{const s=St*b/tot; return {S:s,GP:s*gt};});
+}
+function buildMonthRows(){
+  const tb=$('monthTbl').querySelector('tbody'); let h='';
+  for(let i=0;i<12;i++){
+    h+='<tr><td>'+MONTHS[i]+'</td><td class="n" id="mS'+i+'"></td><td class="n" id="mG'+i+'"></td>'+
+      '<td class="n"><input id="aS'+i+'" type="number" inputmode="numeric" placeholder="—" aria-label="'+MONTHS[i]+'の実績売上"></td>'+
+      '<td class="n"><input id="aG'+i+'" type="number" inputmode="numeric" placeholder="—" aria-label="'+MONTHS[i]+'の実績粗利"></td>'+
+      '<td class="n" id="mGa'+i+'"></td><td class="n" id="mSa'+i+'"></td><td class="n" id="mSc'+i+'"></td><td id="mJ'+i+'"></td><td class="n" id="mP'+i+'"></td><td class="n" id="mO'+i+'"></td><td class="n" id="mC'+i+'"></td></tr>';
+  }
+  h+='<tr class="total"><td>年計</td><td class="n" id="tS"></td><td class="n" id="tG"></td><td class="n" id="tAS"></td><td class="n" id="tAG"></td><td class="n" id="tGa"></td><td class="n" id="tSa"></td><td></td><td id="tJ"></td><td class="n" id="tP"></td><td class="n" id="tO"></td><td></td></tr>';
+  tb.innerHTML=h;
+}
+function renderBonus(){
+  const ss=staffSums();
+  $('sumC').textContent=ss.c+'人'; $('sumA').textContent=fmtYen(ss.t[1]); $('sumB').textContent=fmtYen(ss.t[2]); $('sumD').textContent=fmtYen(ss.t[3]);
+  $('wHint').textContent='売上高の重み '+(100-Math.min(100,Math.max(0,val('wGp'))))+'%';
+  $('tgtSalesHint').textContent='= '+fmtMan(val('tgtSales'))+'（前年比 '+fmtPct(val('tgtSales')/S0,0)+'）';
+  $('tgtGpHint').textContent='目標粗利 '+fmtMan(val('tgtSales')*val('tgtGp')/100);
+  const s=shared(), F=currentFixed(), Ff=fixedFrom(PRESET.fin), Fm=fixedFrom(PRESET.mgmt);
+  const T=monthTargets(), sA=val('scSales')/100, gA=val('scGp')/100, share=val('share')/100;
+  let cum=0, tS=0,tG=0,tAS=0,tAG=0,tP=0,tPs=0,tO=0,paid=0,gated=0,actualCount=0, tOf=0,tOm=0;
+  for(let i=0;i<12;i++){
+    const t=T[i];
+    const aSv=$('aS'+i).value.trim(), aGv=$('aG'+i).value.trim();
+    let Sa,GPa,isAct=false;
+    if(aSv!==''||aGv!==''){
+      isAct=true; actualCount++;
+      Sa=aSv!==''?parseFloat(aSv):(aGv!==''?parseFloat(aGv)/gA:0);
+      GPa=aGv!==''?parseFloat(aGv):Sa*gA;
+    }else{Sa=t.S*sA; GPa=Sa*gA;}
+    const gpAch=t.GP>0?GPa/t.GP:0, sAch=t.S>0?Sa/t.S:0;
+    const tr=tierOf(gpAch,sAch);
+    const pay=ss.t[tr.tier];
+    const pshare=Math.max(0,(GPa-t.GP)-s.v*(Sa-t.S))*share;
+    const op=GPa-s.v*Sa-F/12-pay; cum+=op;
+    tOf+=GPa-s.v*Sa-Ff/12-pay; tOm+=GPa-s.v*Sa-Fm/12-pay;
+    tS+=t.S;tG+=t.GP;tAS+=Sa;tAG+=GPa;tP+=pay;tPs+=pshare;tO+=op; if(pay>0)paid++; if(tr.gated)gated++;
+    $('mS'+i).textContent=fmtMan(t.S,1); $('mG'+i).textContent=fmtMan(t.GP,1);
+    $('mGa'+i).textContent=fmtPct(gpAch,1); $('mSa'+i).textContent=fmtPct(sAch,1); $('mSc'+i).textContent=fmtPct(tr.score,1);
+    const pill=tr.tier>0?'<span class="pill ok">第'+tr.tier+'段階</span>':(tr.gated&&tr.score>=val('th1')/100?'<span class="pill mid">粗利未達で0円</span>':'<span class="pill ng">未達</span>');
+    $('mJ'+i).innerHTML=pill+(isAct?' <span class="pill off">実績</span>':'');
+    $('mP'+i).textContent=pay?fmtYen(pay):'0円';
+    $('mO'+i).innerHTML='<span class="'+cls(op)+'">'+fmtManS(op,1)+'</span>';
+    $('mC'+i).innerHTML='<span class="'+cls(cum)+'">'+fmtManS(cum,1)+'</span>';
+    $('aS'+i).placeholder=Math.round(Sa).toLocaleString('ja-JP'); $('aG'+i).placeholder=Math.round(GPa).toLocaleString('ja-JP');
+  }
+  $('tS').textContent=fmtMan(tS); $('tG').textContent=fmtMan(tG); $('tAS').textContent=fmtMan(tAS); $('tAG').textContent=fmtMan(tAG);
+  $('tGa').textContent=fmtPct(tAG/tG,1); $('tSa').textContent=fmtPct(tAS/tS,1);
+  $('tJ').textContent=paid+'か月支給'; $('tP').textContent=fmtYen(tP); $('tO').innerHTML='<span class="'+cls(tO)+'">'+fmtManS(tO,1)+'</span>';
+  // KPIs
+  $('bonusKpis').innerHTML=
+    '<div class="kpi"><div class="k">報奨金（段階型・年）</div><div class="v">'+fmtMan(tP,1)+'</div><div class="s">'+paid+'か月支給'+(gated?'・粗利未達で見送り'+gated+'か月':'')+'</div></div>'+
+    '<div class="kpi"><div class="k">参考：シェア型（年）</div><div class="v">'+fmtMan(tPs,1)+'</div><div class="s">超過利益の'+fmtPct(share,0)+'</div></div>'+
+    '<div class="kpi"><div class="k">報奨金後 営業損益（財務）</div><div class="v '+cls(tOf)+'">'+fmtManS(tOf,1)+'</div><div class="s">発展会計の実額＋新規パート</div></div>'+
+    '<div class="kpi"><div class="k">報奨金後 営業損益（管理）</div><div class="v '+cls(tOm)+'">'+fmtManS(tOm,1)+'</div><div class="s">本部費・人件費定額込み</div></div>';
+  const lossPaid=[];
+  for(let i=0;i<12;i++){ if($('mP'+i).textContent!=='0円' && $('mO'+i).textContent.indexOf('−')===0) lossPaid.push(MONTHS[i]); }
+  let msg='想定：売上達成'+fmtPct(sA,0)+'・粗利率'+fmtPct(gA,1)+(actualCount?'（'+actualCount+'か月は実績）':'')+'。粗利額の達成率は年計で'+fmtPct(tAG/tG,1)+'。';
+  if(lossPaid.length) msg+=' '+lossPaid.join('・')+'は報奨金を払う月でも単月の営業損益が赤字（閑散月）。単月判定でも、年度の累計で判断する余地を残すか決めておくと安心です。';
+  if(gA<val('tgtGp')/100 && sA>=1) msg+=' 売上は届いても粗利率が目標を下回ると、粗利額が足りず0円の月が出ます（値引きで売上を作っても報奨金は出ない設計）。';
+  $('bonusMsg').textContent=msg;
+  // sensitivity
+  const gt=val('tgtGp')/100, St=val('tgtSales'), GPt=St*gt;
+  $('sensTbl').querySelector('tbody').innerHTML=[0.90,0.95,1.00,1.05,1.10,1.15].map(a=>{
+    const S=St*a, GP=GPt*a, tr=tierOf(a,a), pay=ss.t[tr.tier]*12;
+    const ps=Math.max(0,(a-1)*(GPt-s.v*St))*share;
+    const of=opOf(Ff,S,GP)-pay, om=opOf(Fm,S,GP)-pay;
+    return '<tr'+(a===1?' class="hl"':'')+'><td class="n">'+fmtPct(a,0)+'</td><td class="n">'+fmtMan(S)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtYen(pay)+'</td><td class="n">'+fmtYen(ps)+'</td><td class="n '+cls(of)+'">'+fmtManS(of,1)+'</td><td class="n '+cls(om)+'">'+fmtManS(om,1)+'</td></tr>';
+  }).join('');
+}
+
+function renderAll(){renderSim(); renderBonus(); save();}
+
+// ---- wiring ----
+function applyPreset(){
+  const b=$('basis').value; if(!PRESET[b]) return;
+  const p=PRESET[b]; ['labor','addLabor','common','officer'].forEach(k=>{$(k).value=p[k];});
+}
+function init(){
+  buildMonthRows();
+  IDS.forEach(id=>{const el=$(id); DEFAULTS[id]=el.type==='checkbox'?el.checked:el.value;});
+  const st=load();
+  if(st){
+    IDS.forEach(id=>{const el=$(id); if(el && id in st){ if(el.type==='checkbox') el.checked=!!st[id]; else el.value=st[id]; }});
+    for(let i=0;i<12;i++){ if(st['aS'+i]!==undefined) $('aS'+i).value=st['aS'+i]; if(st['aG'+i]!==undefined) $('aG'+i).value=st['aG'+i]; }
+  }
+  document.addEventListener('input',e=>{
+    const id=e.target&&e.target.id;
+    if(['labor','addLabor','common','officer'].indexOf(id)>=0) $('basis').value='custom';
+    renderAll();
+  });
+  document.addEventListener('change',e=>{
+    if(e.target&&e.target.id==='basis') applyPreset();
+    renderAll();
+  });
+  $('clearActual').addEventListener('click',()=>{for(let i=0;i<12;i++){$('aS'+i).value='';$('aG'+i).value='';} renderAll();});
+  $('resetAll').addEventListener('click',()=>{
+    IDS.forEach(id=>{const el=$(id); if(el.type==='checkbox') el.checked=DEFAULTS[id]; else el.value=DEFAULTS[id];});
+    for(let i=0;i<12;i++){$('aS'+i).value='';$('aG'+i).value='';}
+    renderAll();
+  });
+  renderBridge();
+  renderAll();
+}
+init();
+})();
+</script>
+</body>
+</html>
