@@ -12,7 +12,7 @@
 |---|---|---|
 | シミュレーター（HTML） | https://claude.ai/artifact/YHmR55Uk8TPAph1PUbFX1W | 公開済み（非公開設定）。中身はArtifactツールの read で取得できる |
 | 社長向け説明資料 | https://claude.ai/code/artifact/01dfc37e-fe63-4dbc-94b4-e5e7a2d78f48 | 作成済み。個人別給与の表を含むので、社長以外に共有する前にその表を消す |
-| リポジトリ ayataka20/margin-calculator | ブランチ claude/weekend-bonus-simulation-o1xuuf | コミット5件が未push（GitHub権限エラー403）。中身は weekends.html と index.html のリンク |
+| リポジトリ ayataka20/margin-calculator | ブランチ claude/weekend-bonus-simulation-o1xuuf | コミット6件が未push（GitHub権限エラー403）。中身は weekends.html、index.html のリンク、この引継ぎメモ（HANDOFF_weekends.md） |
 
 ## 3. 確定した前提
 
