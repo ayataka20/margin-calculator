@@ -12,7 +12,7 @@
 |---|---|---|
 | シミュレーター（HTML） | https://claude.ai/artifact/YHmR55Uk8TPAph1PUbFX1W | 公開済み（非公開設定）。中身はArtifactツールの read で取得できる |
 | 社長向け説明資料 | https://claude.ai/code/artifact/01dfc37e-fe63-4dbc-94b4-e5e7a2d78f48 | 作成済み。個人別給与の表を含むので、社長以外に共有する前にその表を消す |
-| リポジトリ ayataka20/margin-calculator | ブランチ claude/weekend-bonus-simulation-o1xuuf | コミット6件が未push（GitHub権限エラー403）。中身は weekends.html、index.html のリンク、この引継ぎメモ（HANDOFF_weekends.md） |
+| リポジトリ ayataka20/margin-calculator | ブランチ claude/weekend-bonus-simulation-o1xuuf | push済み（2026-10-01）。中身は weekends.html、index.html のリンク、この引継ぎメモ（HANDOFF_weekends.md） |
 
 ## 3. 確定した前提
 
@@ -55,7 +55,7 @@
    - **租税公課**（年907,400円のうち共通部 3月436,200円・7月446,300円）：何の税か。消費税の納付なら売上連動として扱いを変える。
    - Driveにある「総勘定元帳.csv」「仕訳エクスポート.csv」はどちらもエフレの分で、グランの元帳はDriveにない。
 2. 確認結果で固変分解を直し、シミュレーター（weekends.html の詳細設定・固変分解表）と説明資料（「固定費と変動費の分解」の表）を更新する。
-3. GitHubを再接続してから、ブランチ claude/weekend-bonus-simulation-o1xuuf をpushする（必要ならPR作成）。
+3. ブランチ claude/weekend-bonus-simulation-o1xuuf はpush済み。必要ならPRを作成する。
 4. 2026年8月・9月の実績が発展会計に入ったら、シミュレーターの月別判定表の実績欄に入れる（スマレジの粗利、税抜）。
 
 ## 6. 使ったデータ（Google Drive）
