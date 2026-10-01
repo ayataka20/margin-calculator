@@ -144,7 +144,7 @@ footer a{color:var(--main-dark)}
 <header class="top">
   <div class="inner">
     <h1>Weekends 報奨金シミュレーター</h1>
-    <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。店舗予算は<b>税込6,000万円（税抜5,455万円）</b>、人件費は2026年8/16〜9/15の給与実績から作った新体制の見込みです。</p>
+    <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。店舗予算は<b>税抜6,000万円</b>（スマレジ登録値）、人件費は2026年8/16〜9/15の給与実績から作った新体制の見込みです。</p>
   </div>
 </header>
 <nav class="toc" aria-label="ページ内の移動">
@@ -194,7 +194,7 @@ footer a{color:var(--main-dark)}
   <p class="lead">どの費用までを店が稼ぐ前提にするかで、必要な売上が変わります。粗利率は下の「必要粗利・売上」の設定値（初期値35%）を使っています。</p>
   <div class="tbl-wrap">
     <table class="tbl" id="bepTbl">
-      <thead><tr><th>段階</th><th class="n">年間の固定費</th><th class="n">必要な粗利額</th><th class="n">必要な売上</th><th class="n">前年比</th><th class="n">予算比</th><th class="n">税込にすると</th></tr></thead>
+      <thead><tr><th>段階</th><th class="n">年間の固定費</th><th class="n">必要な粗利額</th><th class="n">必要な売上</th><th class="n">前年比</th><th class="n">予算比</th><th class="n">月平均の売上</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -263,7 +263,7 @@ footer a{color:var(--main-dark)}
       </div>
       <h3>売上目標から逆算する</h3>
       <div class="fields">
-        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="54545455"><span class="hint" id="revSalesHint"></span></div>
+        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="60000000"><span class="hint" id="revSalesHint"></span></div>
         <div class="field"><label>この売上で必要な粗利率</label><div class="num" style="font-size:22px;font-weight:600;color:var(--main-dark)" id="revOut">—</div><span class="hint" id="revOutSub"></span></div>
       </div>
     </div>
@@ -281,25 +281,25 @@ footer a{color:var(--main-dark)}
   <div class="tbl-wrap">
     <table class="tbl" id="budgetTbl"><thead><tr><th>案</th><th class="n">売上（税抜）</th><th class="n">前年比</th><th class="n">粗利率</th><th class="n">粗利額</th><th class="n">1日あたり</th><th class="n">営業損益（新体制の実費）</th><th class="n">営業損益（＋本部費）</th></tr></thead><tbody></tbody></table>
   </div>
-  <p class="note">店舗予算はスマレジ登録の年6,000万円（税込）。税抜では5,455万円で、前年実績（5,366万円）の101.7%です。新体制の人件費では、粗利率35%を達成しても予算100%では赤字になります。前年並み案の損益が前年実績（−215万円）より悪いのは、人件費を新体制の見込みに置き換えているためです。</p>
+  <p class="note">店舗予算はスマレジ登録の年6,000万円（税抜）で、前年実績の111.8%。粗利率35%なら新体制の実費の損益分岐（5,885万円）を2%上回るだけで、余裕はほぼ報奨金の分しかありません。前年並み案の損益が前年実績（−215万円）より悪いのは、人件費を新体制の見込みに置き換えているためです。</p>
 </section>
 
 <!-- ============ 6. 報奨金 ============ -->
 <section id="bonus">
   <h2><span class="no">6</span>報奨金の試算（単月判定）</h2>
-  <p class="lead">9/22の方針「粗利額8：売上高2」と9/29の決定「まず単月で評価」を反映。予算（税込6,000万円）は100%でも赤字のため、報奨金は<b>予算比110%（税抜6,000万円＝損益分岐＋報奨金）</b>から出る設計を初期値にしています。実績欄に数字を入れると、その月は実績で判定します。</p>
+  <p class="lead">9/22の方針「粗利額8：売上高2」と9/29の決定「まず単月で評価」を反映。予算（税抜6,000万円）・粗利率35%なら、予算100%で報奨金を払っても店舗の実費はほぼトントン。段階は予算比100%・105%・110%を初期値にしています。実績欄に数字を入れると、その月は実績で判定します。</p>
   <div class="grid2">
     <div class="panel">
       <h3 style="margin-top:0">目標と判定ルール</h3>
       <div class="fields">
-        <div class="field"><label for="tgtSales">店舗予算（税込・円/年）</label><input id="tgtSales" type="number" step="1000000" value="60000000"><span class="hint" id="tgtSalesHint"></span></div>
+        <div class="field"><label for="tgtSales">店舗予算（税抜・円/年）</label><input id="tgtSales" type="number" step="1000000" value="60000000"><span class="hint" id="tgtSalesHint"></span></div>
         <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.5" value="35"><span class="hint" id="tgtGpHint"></span></div>
         <div class="field"><label for="alloc">月への配分</label>
           <select id="alloc"><option value="store">スマレジの店舗予算の月比率</option><option value="prev">前年実績の月比率</option></select></div>
         <div class="field"><label for="wGp">粗利額の重み（%）</label><input id="wGp" type="number" step="5" value="80"><span class="hint" id="wHint">売上高の重み 20%</span></div>
-        <div class="field"><label for="gate">支給の前提：粗利の予算比（%以上）</label><input id="gate" type="number" step="1" value="110"><span class="hint">未満なら売上が良くても0円</span></div>
+        <div class="field"><label for="gate">支給の前提：粗利の予算比（%以上）</label><input id="gate" type="number" step="1" value="100"><span class="hint">未満なら売上が良くても0円</span></div>
         <div class="field"><label>段階（スコア＝予算比％以上）</label>
-          <div style="display:flex;gap:6px"><input id="th1" type="number" value="110" aria-label="第1段階" style="width:33%"><input id="th2" type="number" value="115" aria-label="第2段階" style="width:33%"><input id="th3" type="number" value="120" aria-label="第3段階" style="width:33%"></div></div>
+          <div style="display:flex;gap:6px"><input id="th1" type="number" value="100" aria-label="第1段階" style="width:33%"><input id="th2" type="number" value="105" aria-label="第2段階" style="width:33%"><input id="th3" type="number" value="110" aria-label="第3段階" style="width:33%"></div></div>
       </div>
       <h3>1人あたりの月額（円）</h3>
       <div class="tbl-wrap">
@@ -313,12 +313,12 @@ footer a{color:var(--main-dark)}
           </tbody>
         </table>
       </div>
-      <p class="note">初期値は9/22案（四半期で店長2.5万／4万／5.5万円など）を月額に割り直した額。段階は予算比110%・115%・120%。週8時間パートは対象外の想定。</p>
+      <p class="note">初期値は9/22案（四半期で店長2.5万／4万／5.5万円など）を月額に割り直した額。段階は予算比100%・105%・110%。週8時間パートは対象外の想定。</p>
     </div>
     <div class="panel" style="min-width:0">
       <h3 style="margin-top:0">想定シナリオ（実績未入力の月に使う）</h3>
       <div class="fields">
-        <div class="field"><label for="scSales">売上の予算比（%）</label><input id="scSales" type="number" step="1" value="110"></div>
+        <div class="field"><label for="scSales">売上の予算比（%）</label><input id="scSales" type="number" step="1" value="100"></div>
         <div class="field"><label for="scGp">実際の粗利率（%）</label><input id="scGp" type="number" step="0.5" value="35"></div>
         <div class="field"><label for="share">比較：超過利益シェア型の配分率（%）</label><input id="share" type="number" step="5" value="20"><span class="hint">支給ライン（予算比）を超えて増えた利益のうち店に配る割合</span></div>
       </div>
@@ -341,15 +341,15 @@ footer a{color:var(--main-dark)}
   <div class="tbl-wrap">
     <table class="tbl" id="sensTbl"><thead><tr><th>予算比</th><th class="n">売上（税抜）</th><th class="n">粗利</th><th class="n">報奨金（段階型）</th><th class="n">報奨金（シェア型）</th><th class="n">報奨金後 営業損益（新体制の実費）</th><th class="n">報奨金後 営業損益（＋本部費）</th></tr></thead><tbody></tbody></table>
   </div>
-  <p class="note">段階型は予算比110%（＝損益分岐＋報奨金）で支給が始まるので、払った月も年間で赤字になりにくい設計です。シェア型は支給ラインを超えて増えた利益（粗利の増分−テナント連動分）から配るので、会社の利益が減ることはありません。</p>
+  <p class="note">段階型は予算比100%で支給が始まります。予算100%は「損益分岐＋報奨金」とほぼ同じ水準なので、粗利率が35%を下回ると払った年に赤字になります。シェア型は支給ラインを超えて増えた利益（粗利の増分−テナント連動分）から配るので、会社の利益が減ることはありません。</p>
 </section>
 
 <!-- ============ 7. 論点 ============ -->
 <section id="memo">
   <h2><span class="no">7</span>社長との論点メモ（10/2 予算会議用）</h2>
-  <p class="lead">数字は初期設定（粗利率35%・店舗予算 税込6,000万円・新体制の人件費・報奨金は第1段階で月2.4万円）で計算した値です。</p>
+  <p class="lead">数字は初期設定（粗利率35%・店舗予算 税抜6,000万円・新体制の人件費・報奨金は第1段階で月2.4万円）で計算した値です。</p>
   <div class="callout" style="margin-bottom:12px">
-    <b>一言でいうと：</b>予算（税込6,000万円＝税抜5,455万円）は<b>100%達成しても新体制では年−121万円の赤字</b>。損益分岐は予算の108%。そこで予算は据え置き、報奨金は<b>予算の110%（税抜6,000万円）から</b>出す。110%で報奨金を払ってもトントン、120%で本部費まで含めて黒字になる。
+    <b>一言でいうと：</b>予算（税抜6,000万円・粗利2,100万円）は、新体制の人件費での損益分岐（5,885万円）を<b>2%上回るだけ</b>。予算100%で報奨金を払うと店舗の実費はほぼトントン（+4万円）、110%で本部費まで含めて黒字（+43万円）。<b>前提は粗利率35%で、34.5%を切ると予算どおりでも赤字</b>。
   </div>
   <div class="memo">
     <div class="panel">
@@ -364,16 +364,16 @@ footer a{color:var(--main-dark)}
     <div class="panel">
       <h3><span class="tag">B</span>予算と損益分岐の位置</h3>
       <ul>
-        <li>粗利率35%での損益分岐：新体制の実費で<b>税抜5,885万円（予算の108%）</b>、本部費込みで6,224万円（114%）。</li>
-        <li>予算どおり（税抜5,455万円・粗利1,909万円）だと、新体制の実費で−121万円、本部費込みで−216万円。</li>
-        <li>予算の売上で黒字にするには粗利率37.2%（本部費込みなら39.0%）が必要。前年31.0%からは遠い。</li>
-        <li>粗利率が前年並み31%のままだと、予算どおりでも−339万円。</li>
+        <li>粗利率35%での損益分岐：新体制の実費で<b>5,885万円（予算の98%）</b>、報奨金込みで5,987万円（99.8%）、本部費込みで6,224万円（104%）。</li>
+        <li>予算どおり（6,000万円・粗利2,100万円）なら、報奨金前で新体制の実費+32万円、本部費込み−63万円。</li>
+        <li>予算の売上で黒字に必要な粗利率は34.5%（本部費込みなら36.0%）。前年は31.0%。</li>
+        <li>粗利率が前年並み31%のままだと、予算どおり売っても−208万円。<b>売上より粗利率が勝負</b>。</li>
       </ul>
     </div>
     <div class="panel">
       <h3><span class="tag">C</span>達成の打ち手（粗利額＝売上×粗利率）</h3>
       <ul>
-        <li><b>粗利率1ポイント＝年約55〜60万円</b>。売上100万円の上積みで残るのは約28万円。つまり粗利率1ポイントは売上約200万円分。</li>
+        <li><b>粗利率1ポイント＝年約60万円</b>。売上100万円の上積みで残るのは約28万円。つまり粗利率1ポイントは売上約200万円分。</li>
         <li>31%→35%（+4ポイント）が最優先。前々年は34.3%で、戻せない水準ではない。値引きの判断基準と仕入条件の見直しが先。</li>
         <li>人件費が年148万円増えた分を回収するには、粗利率35%で売上約527万円の上積みが要る（1日あたり約1.7万円）。増えた人員で何を増やすか（EC出品、ポップアップ、接客時間）を決めておく。</li>
         <li>在庫2,250万円（約220日分）。処分品は報奨金の計算から外し、点数と原価回収額で別に追う。</li>
@@ -382,9 +382,9 @@ footer a{color:var(--main-dark)}
     <div class="panel">
       <h3><span class="tag">D</span>報奨金の設計（6つの要素）</h3>
       <ol>
-        <li><b>支給ライン</b>：予算の110%から（第1段階）。115%で第2段階、120%で第3段階。予算100%で払うと、赤字のまま報奨金を出すことになる。</li>
-        <li><b>指標</b>：粗利額80%＋売上高20%のスコア。ただし粗利が予算の110%未満なら0円（値引きで売上を作るのを防ぐ）。売上にはメルカリ等のECを含め、手数料は粗利から差し引く。</li>
-        <li><b>期間</b>：判定は単月（9/29決定）。月の予算はスマレジの月別予算を使い、税込÷1.1で比べる。</li>
+        <li><b>支給ライン</b>：予算の100%から（第1段階）、105%で第2段階、110%で第3段階。100%は「損益分岐＋報奨金」とほぼ同じ水準で、110%で本部費まで賄える。</li>
+        <li><b>指標</b>：粗利額80%＋売上高20%のスコア。ただし粗利額が予算の100%未満なら0円（値引きで売上を作るのを防ぐ。粗利率が下がると赤字の年に払うことになる）。売上にはメルカリ等のECを含め、手数料は粗利から差し引く。</li>
+        <li><b>期間</b>：判定は単月（9/29決定）。月の予算はスマレジの月別予算をそのまま使う。</li>
         <li><b>支払い</b>：判定は毎月、支払いは夏冬の賞与にまとめる案。毎月の給与に乗せるとパートの社会保険・扶養の線に影響しうる（社労士に確認）。</li>
         <li><b>対象</b>：店舗全体で判定し、個人差はつけない（店長への依存を減らす）。</li>
         <li><b>歯止め</b>：取り置きの月ずらし対策（会計日で判定、翌月初の取消・返品は前月から控除）。スマレジの原価未登録品は粗利100%に見えるので登録率を確認。</li>
@@ -393,8 +393,8 @@ footer a{color:var(--main-dark)}
     <div class="panel">
       <h3><span class="tag">E</span>10/2に決めること</h3>
       <ul class="checklist">
-        <li>予算は税込6,000万円のまま据え置くか（損益分岐は税込6,473万円）</li>
-        <li>報奨金の支給ラインを予算の110%に置くか</li>
+        <li>予算6,000万円（税抜）・粗利率35%で確定してよいか</li>
+        <li>報奨金の支給開始を予算100%に置くか（粗利率が34.5%を下回ると赤字の年に払う）</li>
         <li>粗利率の目標（35%で良いか）と、値下げの決裁範囲</li>
         <li>報奨金の金額表と対象人数</li>
         <li>支払い方法（毎月か、賞与にまとめるか）</li>
@@ -406,7 +406,7 @@ footer a{color:var(--main-dark)}
       <ul>
         <li>給与は1か月分のみ。月による変動（シフト、島さんの稼働）と、今年の賞与の予定額。</li>
         <li>法定福利の会社負担（社保加入者と料率）。15.5%は仮置き。</li>
-        <li>スマレジの売上・予算が税込で揃っているか（実績を入れるときは税抜に直す）。</li>
+        <li>スマレジの売上実績も税抜で見ているか（予算と同じ物差しで判定する）。</li>
         <li>2026年8月・9月の実績（発展会計にはまだ入っていない）。入ったら6の実績欄へ。</li>
       </ul>
     </div>
@@ -421,7 +421,7 @@ footer a{color:var(--main-dark)}
     <li>店舗直接PL：「2026事業部 実績貼付用」グランシート（発展会計の営業部）。販管費972.4万円（人件費を含まない）。</li>
     <li>管理会計PL：Googleスプレッドシート「2026 グランファミーユ」8月開始 実績表・人件費その他経費シート。人件費85万円/月、共通費15.8万円/月。</li>
     <li>本部費の根拠：「人件費例 ヤタカグループ 管理会計表.xlsx」配賦額(7)（グループ共通費5,422万円の人員割）。</li>
-    <li>店舗予算：スマレジ「予算データ(店舗_管理下のすべての店舗_期間_202608-202707).csv」（年6,000万円、税込と確認済み）。</li>
+    <li>店舗予算：スマレジ「予算データ(店舗_管理下のすべての店舗_期間_202608-202707).csv」（年6,000万円、税抜と確認済み）。</li>
     <li>新体制の人件費：2026年8/16〜9/15の給与支給額（4名合計 月639,029円）×12＋賞与77万円（前年並みと仮定）＋法定福利（社保加入2名の給与と賞与×15.5%と仮定）＝年9,569,713円。</li>
     <li>方針：9/22・9/29の会議メモ（Gemini）と「2026-09-22_Weekends_目標粗利と報償制度試算_四半期版.xlsx」。</li>
     <li>テナント経費の分解は2025/8〜2026/7の月次12点の回帰（固定209,792円/月＋売上×6.92%）。前回試算の「売上の11.6%すべて変動」より、売上が大きく動く場面の誤差が小さくなります。</li>
@@ -441,7 +441,7 @@ const MONTHS=['8月','9月','10月','11月','12月','1月','2月','3月','4月',
 const PREV_SALES=[3040292,3638478,4934704,5149749,6820952,4850701,2795656,4419804,3581469,4799124,4888307,4741065];
 const STORE_BUDGET=[3500000,4500000,5500000,5500000,7000000,6000000,3500000,5500000,4500000,4500000,5500000,4500000];
 const S0=53660301, GP0=16612146;
-const TAX=1.1;
+const TAX=1; // スマレジの予算は税抜
 const LABOR_PREV=8091567, LABOR_NEW=9569713;
 const PRESET={
   fin:{labor:LABOR_NEW, addLabor:0, common:943852, officer:0},
@@ -544,7 +544,7 @@ function renderBep(g){
   rows.forEach((r,i)=>{
     const F=fixedFrom(r.p)+(r.inc?incAt100():0);
     const S=g>s.v?F/(g-s.v):NaN;
-    html+='<tr'+(i===1?' class="hl"':'')+'><td>'+r.name+'<br><small style="color:var(--muted)">'+r.sub+'</small></td><td class="n">'+fmtMan(F,1)+'</td><td class="n">'+(isFinite(S)?fmtMan(g*S):'—')+'</td><td class="n"><b>'+(isFinite(S)?fmtMan(S):'—')+'</b></td><td class="n">'+(isFinite(S)?fmtPct(S/S0,0):'—')+'</td><td class="n">'+(isFinite(S)?fmtPct(S/B,0):'—')+'</td><td class="n">'+(isFinite(S)?fmtMan(S*TAX):'—')+'</td></tr>';
+    html+='<tr'+(i===1?' class="hl"':'')+'><td>'+r.name+'<br><small style="color:var(--muted)">'+r.sub+'</small></td><td class="n">'+fmtMan(F,1)+'</td><td class="n">'+(isFinite(S)?fmtMan(g*S):'—')+'</td><td class="n"><b>'+(isFinite(S)?fmtMan(S):'—')+'</b></td><td class="n">'+(isFinite(S)?fmtPct(S/S0,0):'—')+'</td><td class="n">'+(isFinite(S)?fmtPct(S/B,1):'—')+'</td><td class="n">'+(isFinite(S)?fmtMan(S/12,1):'—')+'</td></tr>';
   });
   $('bepTbl').querySelector('tbody').innerHTML=html;
 }
@@ -611,15 +611,15 @@ function renderBudget(g){
   const B=val('tgtSales')/TAX;
   const rows=[
     {n:'前年並み（2026年度実績の売上・粗利率）',S:S0,g:GP0/S0},
-    {n:'店舗予算（税込6,000万円）',S:B,g:g},
     {n:'損益分岐（新体制の実費）',S:Ff/(g-s.v),g:g},
-    {n:'予算の110%（税抜6,000万円・9/22案と同額）',S:B*1.1,g:g},
-    {n:'損益分岐（新体制の実費＋本部費）',S:Sm,g:g}
+    {n:'店舗予算（スマレジ・税抜6,000万円）',S:B,g:g},
+    {n:'損益分岐（新体制の実費＋本部費）',S:Sm,g:g},
+    {n:'予算の110%（報奨金の第3段階）',S:B*1.1,g:g}
   ];
   const days=Math.max(1,val('days'));
   $('budgetTbl').querySelector('tbody').innerHTML=rows.map((r,i)=>{
     const GP=r.g*r.S, of=opOf(Ff,r.S,GP), om=opOf(Fm,r.S,GP);
-    return '<tr'+(i===1?' class="hl"':'')+'><td>'+r.n+'<br><small style="color:var(--muted)">予算比 '+fmtPct(r.S/B,0)+'・税込 '+fmtMan(r.S*TAX)+'</small></td><td class="n">'+fmtMan(r.S)+'</td><td class="n">'+fmtPct(r.S/S0,1)+'</td><td class="n">'+fmtPct(r.g)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtMan(r.S/days,1)+'</td><td class="n '+cls(of)+'">'+fmtManS(of)+'</td><td class="n '+cls(om)+'">'+fmtManS(om)+'</td></tr>';
+    return '<tr'+(i===2?' class="hl"':'')+'><td>'+r.n+'<br><small style="color:var(--muted)">予算比 '+fmtPct(r.S/B,1)+'</small></td><td class="n">'+fmtMan(r.S)+'</td><td class="n">'+fmtPct(r.S/S0,1)+'</td><td class="n">'+fmtPct(r.g)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtMan(r.S/days,1)+'</td><td class="n '+cls(of)+'">'+fmtManS(of)+'</td><td class="n '+cls(om)+'">'+fmtManS(om)+'</td></tr>';
   }).join('');
 }
 
@@ -645,7 +645,7 @@ function renderBonus(){
   const ss=staffSums();
   $('sumC').textContent=ss.c+'人'; $('sumA').textContent=fmtYen(ss.t[1]); $('sumB').textContent=fmtYen(ss.t[2]); $('sumD').textContent=fmtYen(ss.t[3]);
   $('wHint').textContent='売上高の重み '+(100-Math.min(100,Math.max(0,val('wGp'))))+'%';
-  $('tgtSalesHint').textContent='税抜 '+fmtMan(val('tgtSales')/TAX)+'（前年比 '+fmtPct(val('tgtSales')/TAX/S0,1)+'）';
+  $('tgtSalesHint').textContent='= '+fmtMan(val('tgtSales')/TAX)+'（前年比 '+fmtPct(val('tgtSales')/TAX/S0,1)+'）';
   $('tgtGpHint').textContent='予算粗利（税抜） '+fmtMan(val('tgtSales')/TAX*val('tgtGp')/100);
   const s=shared(), F=currentFixed(), Ff=fixedFrom(PRESET.fin), Fm=fixedFrom(PRESET.mgmt);
   const T=monthTargets(), sA=val('scSales')/100, gA=val('scGp')/100, share=val('share')/100;
@@ -693,11 +693,11 @@ function renderBonus(){
   $('bonusMsg').textContent=msg;
   // sensitivity
   const gt=val('tgtGp')/100, St=val('tgtSales')/TAX, GPt=St*gt, gl=val('gate')/100;
-  $('sensTbl').querySelector('tbody').innerHTML=[1.00,1.05,1.10,1.15,1.20,1.25].map(a=>{
+  $('sensTbl').querySelector('tbody').innerHTML=[0.95,1.00,1.05,1.10,1.15,1.20].map(a=>{
     const S=St*a, GP=GPt*a, tr=tierOf(a,a), pay=ss.t[tr.tier]*12;
     const ps=Math.max(0,(a-gl)*(GPt-s.v*St))*share;
     const of=opOf(Ff,S,GP)-pay, om=opOf(Fm,S,GP)-pay;
-    return '<tr'+(Math.abs(a-1.1)<1e-9?' class="hl"':'')+'><td class="n">'+fmtPct(a,0)+'</td><td class="n">'+fmtMan(S)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtYen(pay)+'</td><td class="n">'+fmtYen(ps)+'</td><td class="n '+cls(of)+'">'+fmtManS(of,1)+'</td><td class="n '+cls(om)+'">'+fmtManS(om,1)+'</td></tr>';
+    return '<tr'+(Math.abs(a-1)<1e-9?' class="hl"':'')+'><td class="n">'+fmtPct(a,0)+'</td><td class="n">'+fmtMan(S)+'</td><td class="n">'+fmtMan(GP)+'</td><td class="n">'+fmtYen(pay)+'</td><td class="n">'+fmtYen(ps)+'</td><td class="n '+cls(of)+'">'+fmtManS(of,1)+'</td><td class="n '+cls(om)+'">'+fmtManS(om,1)+'</td></tr>';
   }).join('');
 }
 
