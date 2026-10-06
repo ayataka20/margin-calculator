@@ -145,7 +145,7 @@ footer a{color:var(--main-dark)}
   <div class="inner">
     <h1>Weekends 報奨金シミュレーター</h1>
     <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。店舗予算は<b>税抜6,000万円</b>（スマレジ登録値）、人件費は2026年8/16〜9/15の給与実績から作った新体制の見込みです。</p>
-    <p><b>10/6の案（毎月黒字）：売上6,860万円・粗利2,340万円（粗利率34.1%）。</b>店長の予算の月比率で配分したうえで、どの月も営業利益がマイナスにならないよう、8・9・2・4・5・7月を粗利180万円・売上530万円に引き上げました（旧案は売上6,300万円・粗利2,150万円）。報奨金は粗利が月の目標の100%以上で店舗計3万円（店長1.2万・古参パート0.8万・パート各0.5万）、105%以上で5万円。入力欄の初期値はこの案です。下の解説文の一部は旧案（売上6,000万円・粗利率35%）の時点のものです。月別目標の確定値はExcel「Weekends_2027年度予算_社長用」の「月別目標」シートを見てください。</p>
+    <p><b>10/7の案：売上6,300万円・粗利2,150万円（粗利率34.1%）。</b>月の目標は、赤字の月を減らしつつ無理のない伸びにそろえました。前年の売上が少ない月（8・9・2・4月）は前年の1.4倍まで引き上げ、残りの月は前年比が同じ（約1.09倍）になるよう配分しています。目標どおりでも赤字になるのは8月（−25万円）・2月（−33万円）と、ほぼトントンの9月・4月（各−6万円）です。報奨金は粗利が月の目標の100%以上で店舗計3万円（店長1.2万・古参パート0.8万・パート各0.5万）、105%以上で5万円。入力欄の初期値はこの案です。下の解説文の一部は旧案（売上6,000万円・粗利率35%）の時点のものです。月別目標の確定値はExcel「Weekends_2027年度予算_社長用」の「月別目標」シートを見てください。</p>
   </div>
 </header>
 <nav class="toc" aria-label="ページ内の移動">
@@ -242,7 +242,7 @@ footer a{color:var(--main-dark)}
         </div>
         <div class="field">
           <label for="gpRate">粗利率（%）</label>
-          <input id="gpRate" type="number" inputmode="decimal" step="0.01" value="34.11">
+          <input id="gpRate" type="number" inputmode="decimal" step="0.01" value="34.13">
           <span class="hint">前年 31.0%／前々年 34.3%</span>
         </div>
         <div class="field">
@@ -285,7 +285,7 @@ footer a{color:var(--main-dark)}
       </div>
       <h3>売上目標から逆算する</h3>
       <div class="fields">
-        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="68600000"><span class="hint" id="revSalesHint"></span></div>
+        <div class="field"><label for="revSales">売上目標（円/年）</label><input id="revSales" type="number" step="1000000" value="63000000"><span class="hint" id="revSalesHint"></span></div>
         <div class="field"><label>この売上で必要な粗利率</label><div class="num" style="font-size:22px;font-weight:600;color:var(--main-dark)" id="revOut">—</div><span class="hint" id="revOutSub"></span></div>
       </div>
     </div>
@@ -314,10 +314,10 @@ footer a{color:var(--main-dark)}
     <div class="panel">
       <h3 style="margin-top:0">目標と判定ルール</h3>
       <div class="fields">
-        <div class="field"><label for="tgtSales">店舗予算（税抜・円/年）</label><input id="tgtSales" type="number" step="1000000" value="68600000"><span class="hint" id="tgtSalesHint"></span></div>
-        <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.01" value="34.11"><span class="hint" id="tgtGpHint"></span></div>
+        <div class="field"><label for="tgtSales">店舗予算（税抜・円/年）</label><input id="tgtSales" type="number" step="1000000" value="63000000"><span class="hint" id="tgtSalesHint"></span></div>
+        <div class="field"><label for="tgtGp">目標粗利率（%）</label><input id="tgtGp" type="number" step="0.01" value="34.13"><span class="hint" id="tgtGpHint"></span></div>
         <div class="field"><label for="alloc">月への配分</label>
-          <select id="alloc"><option value="plan">確定した月別目標（10/6 毎月黒字の案）</option><option value="store">スマレジの店舗予算の月比率</option><option value="prev">前年実績の月比率</option></select></div>
+          <select id="alloc"><option value="plan">確定した月別目標（10/7 ならした案）</option><option value="store">スマレジの店舗予算の月比率</option><option value="prev">前年実績の月比率</option></select></div>
         <div class="field"><label for="wGp">粗利額の重み（%）</label><input id="wGp" type="number" step="5" value="100"><span class="hint" id="wHint">売上高の重み 0%</span></div>
         <div class="field"><label for="gate">支給の前提：粗利の予算比（%以上）</label><input id="gate" type="number" step="1" value="100"><span class="hint">未満なら売上が良くても0円</span></div>
         <div class="field"><label>段階（スコア＝予算比％以上）</label>
@@ -462,10 +462,10 @@ footer a{color:var(--main-dark)}
 const MONTHS=['8月','9月','10月','11月','12月','1月','2月','3月','4月','5月','6月','7月'];
 const PREV_SALES=[3040292,3638478,4934704,5149749,6820952,4850701,2795656,4419804,3581469,4799124,4888307,4741065];
 const STORE_BUDGET=[3500000,4500000,5500000,5500000,7000000,6000000,3500000,5500000,4500000,4500000,5500000,4500000];
-// 10/6案の月別目標（店長の予算の月比率で配分し、閑散月を粗利180万・売上530万に引き上げ。年計 売上6,860万・粗利2,340万）
-const PLAN_S=[5300000,5300000,5800000,5800000,7300000,6300000,5300000,5800000,5300000,5300000,5800000,5300000];
-const PLAN_GP=[1800000,1800000,2000000,2000000,2500000,2100000,1800000,2000000,1800000,1800000,2000000,1800000];
-const PLAN_SALES=68600000, PLAN_RATE=0.3411; // 入力欄の初期値（68,600,000円・34.11%）のとき月別目標がちょうどPLAN_S/PLAN_GPになる
+// 10/7案の月別目標（前年の売上が少ない月は前年の1.4倍まで引き上げ、残りは前年比をそろえて配分。年計 売上6,300万・粗利2,150万）
+const PLAN_S=[4200000,5000000,5400000,5600000,7500000,5300000,3900000,5300000,5000000,5300000,5300000,5200000];
+const PLAN_GP=[1450000,1700000,1850000,1900000,2550000,1800000,1350000,1800000,1700000,1800000,1800000,1800000];
+const PLAN_SALES=63000000, PLAN_RATE=0.3413; // 入力欄の初期値（63,000,000円・34.13%）のとき月別目標がちょうどPLAN_S/PLAN_GPになる
 const S0=53660301, GP0=16612146;
 const TAX=1; // スマレジの予算は税抜
 const LABOR_PREV=8091567, LABOR_NEW=9600000;
@@ -495,7 +495,7 @@ const fmtPct=(v,d)=>(v*100).toFixed(d===undefined?1:d)+'%';
 const cls=v=>v<0?'neg':(v>0?'pos':'');
 
 // ---- storage (per-viewer convenience) ----
-const KEY='weekends-bonus-sim-v3'; // v3: 10/6 毎月黒字の案（売上6,860万・粗利2,340万）
+const KEY='weekends-bonus-sim-v4'; // v4: 10/7 ならした案（売上6,300万・粗利2,150万）
 function save(){
   try{
     const o={};
