@@ -145,7 +145,7 @@ footer a{color:var(--main-dark)}
   <div class="inner">
     <h1>Weekends 報奨金シミュレーター</h1>
     <p>2027年度（2026年8月〜2027年7月）の予算と報奨金を決めるための試算。前年実績は発展会計（財務）と管理会計シートの2026年度（2025年8月〜2026年7月）。金額はすべて税抜。店舗予算は<b>税抜6,000万円</b>（スマレジ登録値）、人件費は2026年8/16〜9/15の給与実績から作った新体制の見込みです。</p>
-    <p><b>10/7の案（②）：年間予算は売上6,300万円・粗利2,150万円（粗利率34.1%）。</b>月の目標は店長がスマレジに登録した予算×粗利率で、それでは営業利益が赤字になる月（8・9・2・4・5・7月）だけ、販管費を賄える粗利180万円・売上530万円に引き上げました。そのため月の目標の合計は売上6,680万円・粗利2,285万円で、年間予算より135万円多くなります（予算達成の余裕）。目標どおりなら、どの月も営業利益はプラスです。報奨金は粗利が月の目標の100%以上で店舗計3万円（店長1.2万・古参パート0.8万・パート各0.5万）、105%以上で5万円。入力欄の初期値はこの案です（「店舗予算」は年間予算の6,300万円、月別の判定表は月の目標の合計）。下の解説文の一部は旧案（売上6,000万円・粗利率35%）の時点のものです。月別目標の確定値はExcel「Weekends_2027年度予算_社長用」の「月別目標」シートを見てください。</p>
+    <p><b>10/7の案（②）：年間予算は売上6,300万円・粗利2,150万円（粗利率34.1%）。</b>月の目標は店長がスマレジに登録した予算×粗利率で、それでは営業利益が赤字になる月（8・9・2・4・5・7月）だけ、販管費を賄える粗利180万円・売上530万円に引き上げました。そのため月の目標の合計は売上6,680万円・粗利2,285万円で、年間予算より135万円多くなります（予算達成の余裕）。目標どおりなら、どの月も営業利益はプラスで、年間+129万円です（販管費は1万円単位に丸めた予算：固定費 月138万円＝人件費80万・テナント固定21万・その他の店舗経費29万・共通部8万、＋報奨金3万円＋テナント歩合）。報奨金は粗利が月の目標の100%以上で店舗計3万円（店長1.2万・古参パート0.8万・パート各0.5万）、105%以上で5万円。入力欄の初期値はこの案です（「店舗予算」は年間予算の6,300万円、月別の判定表は月の目標の合計）。下の解説文の一部は旧案（売上6,000万円・粗利率35%）の時点のものです。月別目標の確定値はExcel「Weekends_2027年度予算_社長用」の「月別目標」シートを見てください。</p>
   </div>
 </header>
 <nav class="toc" aria-label="ページ内の移動">
@@ -260,12 +260,12 @@ footer a{color:var(--main-dark)}
       <details class="adv">
         <summary>詳細設定（費用の内訳）</summary>
         <div class="fields" style="margin-top:10px">
-          <div class="field"><label for="storeFix">店舗の固定経費（円/年）</label><input id="storeFix" type="number" step="10000" value="3493268"><span class="hint">営業部の販管費からテナント経費を除いた額</span></div>
-          <div class="field"><label for="tenantFixM">テナント経費の固定部分（円/月）</label><input id="tenantFixM" type="number" step="1000" value="209792"></div>
+          <div class="field"><label for="storeFix">店舗の固定経費（円/年）</label><input id="storeFix" type="number" step="10000" value="3480000"><span class="hint">月29万円（前年実績3,493,268円を丸め）</span></div>
+          <div class="field"><label for="tenantFixM">テナント経費の固定部分（円/月）</label><input id="tenantFixM" type="number" step="1000" value="210000"></div>
           <div class="field"><label for="tenantVar">テナント経費の売上連動率（%）</label><input id="tenantVar" type="number" step="0.1" value="6.92"></div>
           <div class="field"><label for="labor">人件費（円/年）</label><input id="labor" type="number" step="10000" value="9600000"><span class="hint">新体制960万（月80万円×12）／前年実額809.2万／管理会計1,020万</span></div>
           <div class="field"><label for="addLabor">追加の人件費（円/年）</label><input id="addLabor" type="number" step="10000" value="0"><span class="hint">今後さらに人を増やす場合に入れる</span></div>
-          <div class="field"><label for="common">本部費・共通部（円/年）</label><input id="common" type="number" step="10000" value="943852"><span class="hint">実費94.4万／管理会計189.6万</span></div>
+          <div class="field"><label for="common">本部費・共通部（円/年）</label><input id="common" type="number" step="10000" value="960000"><span class="hint">実費 月8万（前年94.4万を丸め）／管理会計189.6万</span></div>
           <div class="field"><label for="officer">役員報酬の配賦（円/年）</label><input id="officer" type="number" step="10000" value="0"><span class="hint">配賦表の調整案 月30万円＝360万円</span></div>
         </div>
       </details>
@@ -446,7 +446,7 @@ footer a{color:var(--main-dark)}
     <li>店舗予算：スマレジ「予算データ(店舗_管理下のすべての店舗_期間_202608-202707).csv」（年6,000万円、税抜と確認済み）。</li>
     <li>新体制の人件費：2026年8/16〜9/15の給与支給額（4名合計 月639,029円）×12＋賞与77万円（今年も同額で確認済み）＋法定福利（社保加入2名の給与と賞与×15.5%と仮定）の積み上げは年9,569,713円。経営判断で年960万円（月80万円）に丸めて計上</li>
     <li>方針：9/22・9/29の会議メモ（Gemini）と「2026-09-22_Weekends_目標粗利と報償制度試算_四半期版.xlsx」。</li>
-    <li>テナント経費の分解は2025/8〜2026/7の月次12点の回帰（固定209,792円/月＋売上×6.92%）。前回試算の「売上の11.6%すべて変動」より、売上が大きく動く場面の誤差が小さくなります。</li>
+    <li>テナント経費の分解は2025/8〜2026/7の月次12点の回帰（固定209,792円/月＋売上×6.92%）。予算では固定分を月21万円に丸め、歩合は月ごとに1万円単位で丸めています。前回試算の「売上の11.6%すべて変動」より、売上が大きく動く場面の誤差が小さくなります。</li>
     <li>Driveにある「試算表_エフレWeekends_FY2025.xlsx」（売上5,200万円などの丸めた数字）は発展会計の実績と一致しないため使っていません。</li>
   </ul>
 </section>
@@ -470,7 +470,7 @@ const S0=53660301, GP0=16612146;
 const TAX=1; // スマレジの予算は税抜
 const LABOR_PREV=8091567, LABOR_NEW=9600000;
 const PRESET={
-  fin:{labor:LABOR_NEW, addLabor:0, common:943852, officer:0},
+  fin:{labor:LABOR_NEW, addLabor:0, common:960000, officer:0},
   mgmt:{labor:LABOR_NEW, addLabor:0, common:1896000, officer:0},
   sheet:{labor:10200000, addLabor:0, common:1896000, officer:0},
   full:{labor:10200000, addLabor:0, common:1896000, officer:3600000}
@@ -495,7 +495,7 @@ const fmtPct=(v,d)=>(v*100).toFixed(d===undefined?1:d)+'%';
 const cls=v=>v<0?'neg':(v>0?'pos':'');
 
 // ---- storage (per-viewer convenience) ----
-const KEY='weekends-bonus-sim-v5'; // v5: 10/7②案（月の目標合計 6,680万・2,285万）
+const KEY='weekends-bonus-sim-v6'; // v6: 10/7②案・販管費を1万円単位に丸め
 function save(){
   try{
     const o={};
@@ -513,9 +513,10 @@ function load(){
 
 // ---- cost model ----
 function shared(){return {storeFix:val('storeFix'), tenantFix:val('tenantFixM')*12, v:val('tenantVar')/100};}
+const tenantVarM=(s,S)=>Math.round(s.v*S/1e4)*1e4; // 月のテナント歩合（1万円単位に丸め）
 function fixedFrom(p){const s=shared(); return s.storeFix+s.tenantFix+p.labor+p.addLabor+p.common+p.officer;}
 function currentFixed(){return fixedFrom({labor:val('labor'),addLabor:val('addLabor'),common:val('common'),officer:val('officer')});}
-function opOf(F,S,GP){return GP-shared().v*S-F;}
+function opOf(F,S,GP){return GP-Math.round(shared().v*S/1e4)*1e4-F;} // 歩合は1万円単位に丸め
 
 // ---- staff / tiers ----
 function staffSums(){
@@ -694,8 +695,9 @@ function renderBonus(){
     const pay=ss.t[tr.tier];
     const gl=val('gate')/100;
     const pshare=Math.max(0,(GPa-gl*t.GP)-s.v*(Sa-gl*t.S))*share;
-    const op=GPa-s.v*Sa-F/12-pay; cum+=op;
-    tOf+=GPa-s.v*Sa-Ff/12-pay; tOm+=GPa-s.v*Sa-Fm/12-pay;
+    const tv=tenantVarM(s,Sa);
+    const op=GPa-tv-F/12-pay; cum+=op;
+    tOf+=GPa-tv-Ff/12-pay; tOm+=GPa-tv-Fm/12-pay;
     tS+=t.S;tG+=t.GP;tAS+=Sa;tAG+=GPa;tP+=pay;tPs+=pshare;tO+=op; if(pay>0)paid++; if(tr.gated)gated++;
     $('mS'+i).textContent=fmtMan(t.S,1); $('mG'+i).textContent=fmtMan(t.GP,1);
     $('mGa'+i).textContent=fmtPct(gpAch,1); $('mSa'+i).textContent=fmtPct(sAch,1); $('mSc'+i).textContent=fmtPct(tr.score,1);
